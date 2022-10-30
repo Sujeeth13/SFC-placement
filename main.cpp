@@ -25,11 +25,11 @@ class node{
     public:
         int id;   // temporary int 
         double link;   // cost 
-        double bw;     // bandwith
-        node(int a,double l,double b){
-            id = a;
-            link = l;
-            bw = b;
+        double available_bandwidth;     // bandwith
+        node(int id,double link,double bw){
+            this->id = id;
+            this->link = link;
+            this->available_bandwidth = bw;
         }
 };
 
@@ -50,13 +50,21 @@ class node_capacity{ //contains the list of NFs installed in node and the amount
     }
 };
 
-class request{  //represents the parameters of the SFC request
+class Request{  //represents the parameters of the SFC request
     public:
     int src;
     int dest;
-    vector<vector<f_attr>> SFC;
+    vector<vector<vector<int>>> SFC;
     double e2e;
     double t_arrival_rate;
+    Request(){}
+    Request(int srd,int dest,vector<vector<vector<int>>> SFC,double e2e,double t_arrival_rate){
+        this->src = src;
+        this->dest = dest;
+        this->SFC = SFC;
+        this->e2e = e2e;
+        this->t_arrival_rate = t_arrival_rate;
+    }
 };
 
 //SFC = {{{0}},{{1,2},{3}},{{4}}};
@@ -110,6 +118,33 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
     return temp;
 }
 
+void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
+    vector<vector<double>> paths;
+    map<int,int> deployed_inst;
+    map<int,int> time; //map that contains the reach time to a NF in the chain
+    //initializing reach time to that NF in the chain to 0
+    vector<vector<vector<int>>> SFC = request.SFC;
+    int src = request.src;
+    int dest = request.dest;
+    double e2e = request.e2e;
+    double t_arrival_rate = request.t_arrival_rate;
+    for(int i=0;i<SFC.size();i++){
+        for(int j=0;j<SFC[i].size();j++){
+            for(int k=0;k<SFC[i][j].size();k++){
+                time[SFC[i][j][k]] = 0;
+            }
+        }
+    }
+    //find critical branches delay
+    for(int i=0;i<NF_to_node[SFC[0][0][0]].size();i++){
+        if(n_resource[NF_to_node[SFC[0][0][0]][i]].NF[SFC[0][0][0]] > t_arrival_rate);
+    }
+    for(int i=0;i<SFC.size();i++){
+        if(i == 0){
+
+        }
+    }
+}
 int main(){
 
     ifstream fin("graph_config.txt");
@@ -126,7 +161,7 @@ int main(){
     vector<vector<node>> g(N); //network topology
     vector<node_capacity> n_resource(N); //tells all the function instances deployed in a node in the topology
     vector<vector<int>> NF_to_node(funcs); //tells in which node each function is deployed in
-    vector<request> requests(n_of_requests); //contains a batch of SFC requests
+    vector<Request> requests(n_of_requests); //contains a batch of SFC requests
     map<int,double> NFs;
     for(int i=0;i<funcs;i++){
         int f_id;
@@ -134,7 +169,6 @@ int main(){
         rin>>f_id>>p_time;
         NFs[f_id] = p_time;
     }
-
     vector<vector<vector<int>>> SFC{{{0}},{{1},{2},{3}},{{4}}};
 
     SFC = bin(SFC,NFs);
@@ -193,6 +227,7 @@ int main(){
             cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].link<<")"<<endl;
         }
     }
-
+    Request request(0,6,SFC,270,1);
+    SFC_embedding(g,n_resource,NF_to_node,NFs,request);
     return 0;
 }
