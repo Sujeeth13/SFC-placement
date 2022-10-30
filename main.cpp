@@ -41,12 +41,12 @@ class f_attr{  //contains the attributes of a network function
 
 class node_capacity{ //contains the list of NFs installed in node and the amount left of each of those instances.
     public:
-    map<int,int> NF; //maps a function instance to the amount of processing power left for that function(think NF shareability)
-    map<int,double> NF_p_time; // tells how much processing time that NF requires.
+    map<int,double> NF_left; //maps a function instance to the amount of processing power left for that function(think NF shareability)
+    map<int,double> deployed_NF; // tells how much processing time that NF requires.
     node_capacity(){}
     node_capacity(int id,double time){
-        NF[id] = 1;
-        NF[id] = time;
+        NF_left[id] = 1;
+        deployed_NF[id] = time;
     }
 };
 
@@ -135,9 +135,11 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             }
         }
     }
-    //find critical branches delay
-    for(int i=0;i<NF_to_node[SFC[0][0][0]].size();i++){
-        if(n_resource[NF_to_node[SFC[0][0][0]][i]].NF[SFC[0][0][0]] > t_arrival_rate);
+    // {{{0}},{{1,2},{3}},{{4}}}
+    //find critical branches delay from src to the C0
+    int critical_branch_0 = SFC[0][SFC[0].size()-1][0];
+    for(int i=0;i<NF_to_node[critical_branch_0].size();i++){
+        if(n_resource[NF_to_node[critical_branch_0][i]].NF_left[critical_branch_0] > t_arrival_rate);
     }
     for(int i=0;i<SFC.size();i++){
         if(i == 0){
@@ -181,22 +183,22 @@ int main(){
         }
         cout<<endl;
     }
-    //SFC = {{{0}},{{1,2},{3}},{{4}};
+    //SFC = {{{0}},{{1,2},{3}},{{4}}};
     for(int i=0;i<n_of_f_instances;i++){
         int f_id;
         double time;
         int node_id;
         fin>>node_id>>f_id>>time;
         // node_capacity temp(f_id,time);
-        n_resource[node_id].NF[f_id] = 1;
-        n_resource[node_id].NF_p_time[f_id] = time;
+        n_resource[node_id].NF_left[f_id] = 1;
+        n_resource[node_id].deployed_NF[f_id] = time;
         NF_to_node[f_id].push_back(node_id);
     }
     cout<<"Node to funcs"<<endl;
     for(int i=0;i<N;i++){
         cout<<i<<":"<<endl;
         map<int,double>::iterator it;
-        for(it=n_resource[i].NF_p_time.begin();it!=n_resource[i].NF_p_time.end();it++){
+        for(it=n_resource[i].deployed_NF.begin();it!=n_resource[i].deployed_NF.end();it++){
             cout<<it->first+1<<":"<<it->second<<endl;
         }
         cout<<endl;
