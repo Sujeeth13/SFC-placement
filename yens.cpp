@@ -2,6 +2,52 @@
 
 using namespace std;
 
+class node{
+    public:
+        int id;   // temporary int 
+        double link;   // cost 
+        double available_bandwidth;     // bandwith
+        node(int id,double link,double bw){
+            this->id = id;
+            this->link = link;
+            this->available_bandwidth = bw;
+        }
+};
+
+class f_attr{  //contains the attributes of a network function
+    public:
+    int id;
+    double processing_t;
+};
+
+class node_capacity{ //contains the list of NFs installed in node and the amount left of each of those instances.
+    public:
+    map<int,double> NF_left; //maps a function instance to the amount of processing power left for that function(think NF shareability)
+    map<int,double> deployed_NF; // tells how much processing time that NF requires.
+    node_capacity(){}
+    node_capacity(int id,double time){
+        NF_left[id] = 1;
+        deployed_NF[id] = time;
+    }
+};
+
+class Request{  //represents the parameters of the SFC request
+    public:
+    int src;
+    int dest;
+    vector<vector<vector<int>>> SFC;
+    double e2e;
+    double t_arrival_rate;
+    Request(){}
+    Request(int srd,int dest,vector<vector<vector<int>>> SFC,double e2e,double t_arrival_rate){
+        this->src = src;
+        this->dest = dest;
+        this->SFC = SFC;
+        this->e2e = e2e;
+        this->t_arrival_rate = t_arrival_rate;
+    }
+};
+
 void print(std::vector <int> const &a) {
    std::cout << "The vector elements are : ";
 
@@ -154,7 +200,97 @@ bool isInMinHeap(struct MinHeap *minHeap, int v)
   
 // The main function that calulates distances of shortest paths from src to all 
 // vertices. It is a O(ELogV) function 
-vector <int> dijkstra(int src,int dest, vector<vector<struct LinkInfo>> &graph,int throughput)
+// vector <int> dijkstra(int src,int dest, vector<vector<struct LinkInfo>> &graph,int throughput)
+// {
+
+//     // request has source, destination, NF{vector<pair<int, int>>}, throughput, delay 
+//     int V = graph.size();// Get the number of vertices in graph 
+//     float dist[V];      // dist values used to pick minimum weight edge in cut 
+//     //int src = request.source;
+//     //int dest = request.destination;
+//     //int throughput = request.throughput;
+//     vector<vector<int>> paths;
+//     paths.resize(V);
+
+//     // minHeap represents set E 
+//     struct MinHeap* minHeap = createMinHeap(V); 
+
+//     // Initialize min heap with all vertices. dist value of all vertices  
+//     for (int v = 0; v < V; ++v) 
+//     {
+//         dist[v] = FLT_MAX; 
+//         minHeap->array[v] = newMinHeapNode(v, dist[v]); 
+//         minHeap->pos[v] = v; 
+//     } 
+  
+//     // Make dist value of src vertex as 0 so that it is extracted first 
+//     minHeap->array[src] = newMinHeapNode(src, dist[src]); 
+//     paths[src].push_back(src);
+//     minHeap->pos[src]   = src; 
+//     dist[src] = 0; 
+//     decreaseKey(minHeap, src, dist[src]); 
+  
+//     // Initially size of min heap is equal to V
+//     minHeap->size = V; 
+  
+//     // In the followin loop, min heap contains all nodes 
+//     // whose shortest distance is not yet finalized. 
+//     while (!isEmpty(minHeap)) 
+//     {
+//         // Extract the vertex with minimum distance value 
+//         struct MinHeapNode* minHeapNode = extractMin(minHeap); 
+//         int u = minHeapNode->v; // Store the extracted vertex number 
+  
+//         // Traverse through all adjacent vertices of u (the extracted 
+//         // vertex) and update their distance values  
+//         for(auto pCrawl : graph[u]) 
+//         {
+//             int v = pCrawl.node2; 
+  
+//             // If shortest distance to v is not finalized yet, and distance to v 
+//             // through u is less than its previously calculated distance and u-v link throughput is not a bottleneck for us
+//             if (isInMinHeap(minHeap, v) && dist[u] != FLT_MAX &&  
+//                                           pCrawl.delay + dist[u] < dist[v] && pCrawl.available_bandwidth >= throughput) 
+//             { 
+//                 paths[v].clear(); // clear the path to the destination node, add the nodes from the node just visited
+//                 for(auto &vertex: paths[u])
+//                     paths[v].push_back(vertex);
+//                 paths[v].push_back(v);
+//                 dist[v] = dist[u] + pCrawl.delay; 
+//                 // //cout<<"delay is "<<pCrawl.delay<<endl;
+//                 // update distance value in min heap also 
+//                 decreaseKey(minHeap, v, dist[v]); 
+//             }
+//             // if destination is finalized, we are done!
+//             else if(v == dest && !isInMinHeap(minHeap, v))
+//                 break; 
+//         }
+//     }
+  
+//     // print the calculated shortest distances 
+//     // //cout<<"The distance from source "<<src<<" to destination "<<dest<<" is: "<<dist[dest]<<endl;
+//     // //cout<<"The path of the shortest distance is: ";
+//     // print the shortest distance
+    
+//     // for(auto &vertex: paths[dest])
+//     //     //cout<<vertex<<" ";
+//     // //cout<<endl;
+//     // float vnf_delay = compute_vnf_delay(request);
+
+//     // if(dist[dest]+vnf_delay>request.delay)
+//     //     paths[dest].clear();
+
+//     vector <int> selected_path;
+//     // if(dist[dest]!=FLT_MAX)
+//     //    selected_path.delay = dist[dest] + vnf_delay;
+//     // else
+//     //     selected_path.delay = dist[dest];
+//     selected_path = paths[dest];
+
+//     return selected_path;
+// }
+
+vector <int> dijkstra(int src,int dest, vector<vector<node>> &graph,int throughput)
 {
 
     // request has source, destination, NF{vector<pair<int, int>>}, throughput, delay 
@@ -199,18 +335,18 @@ vector <int> dijkstra(int src,int dest, vector<vector<struct LinkInfo>> &graph,i
         // vertex) and update their distance values  
         for(auto pCrawl : graph[u]) 
         {
-            int v = pCrawl.node2; 
+            int v = pCrawl.id; 
   
             // If shortest distance to v is not finalized yet, and distance to v 
             // through u is less than its previously calculated distance and u-v link throughput is not a bottleneck for us
             if (isInMinHeap(minHeap, v) && dist[u] != FLT_MAX &&  
-                                          pCrawl.delay + dist[u] < dist[v] && pCrawl.available_bandwidth >= throughput) 
+                                          pCrawl.link + dist[u] < dist[v] && pCrawl.available_bandwidth >= throughput) 
             { 
                 paths[v].clear(); // clear the path to the destination node, add the nodes from the node just visited
                 for(auto &vertex: paths[u])
                     paths[v].push_back(vertex);
                 paths[v].push_back(v);
-                dist[v] = dist[u] + pCrawl.delay; 
+                dist[v] = dist[u] + pCrawl.link; 
                 // //cout<<"delay is "<<pCrawl.delay<<endl;
                 // update distance value in min heap also 
                 decreaseKey(minHeap, v, dist[v]); 
@@ -255,12 +391,12 @@ bool comparePaths(vector<int> &P1,vector<int> &P2)
     return sum1<=sum2;
 }
 
-struct k_shortest YenKSP(vector<vector<struct LinkInfo>> &graph,struct Request request,int K)
+vector<vector<int>> YenKSP(vector<vector<node>> &graph,Request request,int K)
 {
-    int src = request.source;
-    int dest = request.destination;
+    int src = request.src;
+    int dest = request.dest;
     vector <int> A[K+1];
-    int throughput = request.throughput;
+    int throughput = request.t_arrival_rate;
     A[0] = dijkstra(src,dest,graph,throughput);
     // for(int i=0;i<A[0].size();i++)
     // cout<<A[0][i]<<" ";
@@ -284,14 +420,14 @@ struct k_shortest YenKSP(vector<vector<struct LinkInfo>> &graph,struct Request r
             //cout<<"Remove path "<<endl;
             //print(removepath);
             //cout<<endl;
-            vector <vector<struct LinkInfo>> graph_copy = graph;
+            vector <vector<node>> graph_copy = graph;
             for(int i=0;i<removepath.size()-1;i++)
             {
                 int node1=removepath[i];
                 int node2=removepath[i+1];
                 for(auto a = graph_copy[node1].begin();a!=graph_copy[node1].end();a++)
                 {
-                    if((*a).node2==node2)
+                    if((*a).id==node2)
                     {
                         graph_copy[node1].erase(a);
                         break;
@@ -299,7 +435,7 @@ struct k_shortest YenKSP(vector<vector<struct LinkInfo>> &graph,struct Request r
                 }
                 for(auto a = graph_copy[node2].begin();a!=graph_copy[node2].end();a++)
                 {
-                    if((*a).node2==node1)
+                    if((*a).id==node1)
                     {
                         graph_copy[node2].erase(a);
                         break;
@@ -327,10 +463,10 @@ struct k_shortest YenKSP(vector<vector<struct LinkInfo>> &graph,struct Request r
                 int node1 = rootpath[i];
                 for(auto j = graph_copy[node1].begin();j!=graph_copy[node1].end();j++)
                 {
-                    int node2 = (*j).node2;
+                    int node2 = (*j).id;
                     for(auto a = graph_copy[node2].begin();a!=graph_copy[node2].end();a++)
                     {
-                        if((*a).node2==node1)
+                        if((*a).id==node1)
                         {
                             graph_copy[node2].erase(a);
                             break;
@@ -416,16 +552,47 @@ struct k_shortest YenKSP(vector<vector<struct LinkInfo>> &graph,struct Request r
     //     print(B[i]);
     //     cout<<endl;
     // }
-    struct k_shortest temp;
+    vector<vector<int>> temp;
     // for(int i=1;i<K;i++)
     // A[i]=B[i];
     for(int i=0;i<K;i++)
     {
         if(A[i].size()!=0)
-        temp.path.push_back(A[i]);
+        temp.push_back(A[i]);
+        for(int j=0;j<A[i].size();j++){
+            cout<<A[i][j]<<"->";
+        }
+        cout<<endl;
     }
+    cout<<"Test:::::::::::::::::::"<<K<<"   "<<temp.size()<<endl;
     //B.clear();
-    sort(temp.path.begin(),temp.path.end(),comparePaths);
+    //sort(temp.begin(),temp.end(),comparePaths);
     return temp;
 
+}
+
+double add_links(vector<vector<node>>& g,vector<int>& path){ //calculates the link delay in a given path in the graph
+    double time=0;
+    int src = path[0];
+    for(int i=1;i<path.size();i++){
+        for(auto x:g[path[i-1]]){
+            if(x.id == path[i]){
+                time += x.link;
+            }
+        }
+    }
+    return time;
+}
+
+vector<vector<double>> calc_time(vector<vector<node>>& g,vector<vector<vector<int>>>& paths){ //calculates the time taken to traverse each of the k shortest path for all src-dest pairs in graph
+    vector<vector<double>> times(paths.size());
+    for(int i=0;i<paths.size();i++){
+        vector<double> temp(paths[i].size());
+        for(int j=0;j<paths[i].size();j++){
+            temp[j] = add_links(g,paths[i][j]);
+        }
+        times[i] = temp;
+        temp.clear();
+    }
+    return times;
 }

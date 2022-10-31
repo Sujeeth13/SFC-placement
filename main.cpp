@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-
+#include "yens.cpp"
 using namespace std;
 
 // class g_nodes{
@@ -21,51 +21,51 @@ using namespace std;
 
 // };
 
-class node{
-    public:
-        int id;   // temporary int 
-        double link;   // cost 
-        double available_bandwidth;     // bandwith
-        node(int id,double link,double bw){
-            this->id = id;
-            this->link = link;
-            this->available_bandwidth = bw;
-        }
-};
+// class node{
+//     public:
+//         int id;   // temporary int 
+//         double link;   // cost 
+//         double available_bandwidth;     // bandwith
+//         node(int id,double link,double bw){
+//             this->id = id;
+//             this->link = link;
+//             this->available_bandwidth = bw;
+//         }
+// };
 
-class f_attr{  //contains the attributes of a network function
-    public:
-    int id;
-    double processing_t;
-};
+// class f_attr{  //contains the attributes of a network function
+//     public:
+//     int id;
+//     double processing_t;
+// };
 
-class node_capacity{ //contains the list of NFs installed in node and the amount left of each of those instances.
-    public:
-    map<int,double> NF_left; //maps a function instance to the amount of processing power left for that function(think NF shareability)
-    map<int,double> deployed_NF; // tells how much processing time that NF requires.
-    node_capacity(){}
-    node_capacity(int id,double time){
-        NF_left[id] = 1;
-        deployed_NF[id] = time;
-    }
-};
+// class node_capacity{ //contains the list of NFs installed in node and the amount left of each of those instances.
+//     public:
+//     map<int,double> NF_left; //maps a function instance to the amount of processing power left for that function(think NF shareability)
+//     map<int,double> deployed_NF; // tells how much processing time that NF requires.
+//     node_capacity(){}
+//     node_capacity(int id,double time){
+//         NF_left[id] = 1;
+//         deployed_NF[id] = time;
+//     }
+// };
 
-class Request{  //represents the parameters of the SFC request
-    public:
-    int src;
-    int dest;
-    vector<vector<vector<int>>> SFC;
-    double e2e;
-    double t_arrival_rate;
-    Request(){}
-    Request(int srd,int dest,vector<vector<vector<int>>> SFC,double e2e,double t_arrival_rate){
-        this->src = src;
-        this->dest = dest;
-        this->SFC = SFC;
-        this->e2e = e2e;
-        this->t_arrival_rate = t_arrival_rate;
-    }
-};
+// class Request{  //represents the parameters of the SFC request
+//     public:
+//     int src;
+//     int dest;
+//     vector<vector<vector<int>>> SFC;
+//     double e2e;
+//     double t_arrival_rate;
+//     Request(){}
+//     Request(int srd,int dest,vector<vector<vector<int>>> SFC,double e2e,double t_arrival_rate){
+//         this->src = src;
+//         this->dest = dest;
+//         this->SFC = SFC;
+//         this->e2e = e2e;
+//         this->t_arrival_rate = t_arrival_rate;
+//     }
+// };
 
 //SFC = {{{0}},{{1,2},{3}},{{4}}};
 
@@ -119,7 +119,10 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
 }
 
 void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
-    vector<vector<double>> paths;
+
+    vector<vector<vector<int>>> paths;
+    vector<vector<double>> time_of_paths = calc_time(g,paths);
+
     map<int,int> deployed_inst;
     map<int,int> time; //map that contains the reach time to a NF in the chain
     //initializing reach time to that NF in the chain to 0
@@ -138,15 +141,22 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     // {{{0}},{{1,2},{3}},{{4}}}
     //find critical branches delay from src to the C0
     int critical_branch_0 = SFC[0][SFC[0].size()-1][0];
+    int inst_0;
+    int min_dist = INT_MAX;
     for(int i=0;i<NF_to_node[critical_branch_0].size();i++){
-        if(n_resource[NF_to_node[critical_branch_0][i]].NF_left[critical_branch_0] > t_arrival_rate);
-    }
-    for(int i=0;i<SFC.size();i++){
-        if(i == 0){
-
+        if(n_resource[NF_to_node[critical_branch_0][i]].NF_left[critical_branch_0] > t_arrival_rate){
+            if(time_of_paths[src][NF_to_node[critical_branch_0][i]] < min_dist){
+                min_dist = time_of_paths[src][NF_to_node[critical_branch_0][i]];
+                inst_0 = NF_to_node[critical_branch_0][i];
+            }
         }
     }
+    deployed_inst[critical_branch_0] = inst_0;
+    for(int i=0;i<SFC.size()-1;i++){
+        
+    }
 }
+
 int main(){
 
     ifstream fin("graph_config.txt");
@@ -229,7 +239,22 @@ int main(){
             cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].link<<")"<<endl;
         }
     }
-    Request request(0,6,SFC,270,1);
-    SFC_embedding(g,n_resource,NF_to_node,NFs,request);
+    Request request(1,5,SFC,270,1);
+    //SFC_embedding(g,n_resource,NF_to_node,NFs,request);
+
+    vector<int> paths = dijkstra(0,6,g,12);
+    for(int i=0;i<paths.size();i++){
+        cout<<paths[i]<<"->";
+    }
+    cout<<endl;
+
+    vector<vector<int>> k_paths = YenKSP(g,request,3);
+    for(int i=0;i<k_paths.size();i++){
+        cout<<"Path"<<i<<":"<<endl;
+        for(int j=0;j<k_paths[i].size();j++){
+            cout<<k_paths[i][j]<<"->";
+        }
+        cout<<endl;
+    }
     return 0;
 }
