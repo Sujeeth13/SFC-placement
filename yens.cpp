@@ -584,15 +584,16 @@ double add_links(vector<vector<node>>& g,vector<int>& path){ //calculates the li
     return time;
 }
 
-vector<vector<double>> calc_time(vector<vector<node>>& g,vector<vector<vector<int>>>& paths){ //calculates the time taken to traverse each of the k shortest path for all src-dest pairs in graph
-    vector<vector<double>> times(paths.size());
+vector<vector<vector<double>>> calc_time(vector<vector<node>>& g,vector<vector<vector<vector<int>>>>& paths){ //calculates the time taken to traverse each of the k shortest path for all src-dest pairs in graph
+    vector<vector<vector<double>>> times(paths.size());
     for(int i=0;i<paths.size();i++){
-        vector<double> temp(paths[i].size());
+        times[i].resize(paths[i].size());
         for(int j=0;j<paths[i].size();j++){
-            temp[j] = add_links(g,paths[i][j]);
+            times[i][j].resize(paths[i][j].size());
+            for(int k=0;k<paths[i][j].size();k++){
+                times[i][j][k] = add_links(g,paths[i][j][k]);
+            }
         }
-        times[i] = temp;
-        temp.clear();
     }
     return times;
 }

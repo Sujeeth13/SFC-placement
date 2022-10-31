@@ -120,8 +120,8 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
 
 void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
 
-    vector<vector<vector<int>>> paths;
-    vector<vector<double>> time_of_paths = calc_time(g,paths);
+    vector<vector<vector<vector<int>>>> paths;
+    vector<vector<vector<double>>> time_of_paths = calc_time(g,paths);
 
     map<int,int> deployed_inst;
     map<int,int> time; //map that contains the reach time to a NF in the chain
@@ -145,8 +145,8 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     int min_dist = INT_MAX;
     for(int i=0;i<NF_to_node[critical_branch_0].size();i++){
         if(n_resource[NF_to_node[critical_branch_0][i]].NF_left[critical_branch_0] > t_arrival_rate){
-            if(time_of_paths[src][NF_to_node[critical_branch_0][i]] < min_dist){
-                min_dist = time_of_paths[src][NF_to_node[critical_branch_0][i]];
+            if(time_of_paths[src][NF_to_node[critical_branch_0][i]][0] < min_dist){
+                min_dist = time_of_paths[src][NF_to_node[critical_branch_0][i]][0];
                 inst_0 = NF_to_node[critical_branch_0][i];
             }
         }
