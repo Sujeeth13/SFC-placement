@@ -120,23 +120,23 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
 
 void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
 
-    vector<vector<int>> k_paths = YenKSP(g,request,3);
-    for(int i=0;i<k_paths.size();i++){
-        cout<<"Path"<<i<<":"<<endl;
-        for(int j=0;j<k_paths[i].size();j++){
-            cout<<k_paths[i][j]<<"->";
-        }
-        cout<<endl;
-    }
-    vector<vector<vector<vector<int>>>> paths(1,vector<vector<vector<int>>>(1));
-    cout<<paths.size()<<paths[0].size()<<endl;
-    paths[0][0]= k_paths;
+    // vector<vector<int>> k_paths = YenKSP(g,request,3);
+    // for(int i=0;i<k_paths.size();i++){
+    //     cout<<"Path"<<i<<":"<<endl;
+    //     for(int j=0;j<k_paths[i].size();j++){
+    //         cout<<k_paths[i][j]<<"->";
+    //     }
+    //     cout<<endl;
+    // }
+    vector<vector<vector<vector<int>>>> paths(/*1,vector<vector<vector<int>>>(1)*/);
+    // cout<<paths.size()<<paths[0].size()<<endl;
+    // paths[0][0]= k_paths;
     vector<vector<vector<double>>> time_of_paths = calc_time(g,paths);
-    cout<<"Time:"<<endl;
-    for(int i=0;i<time_of_paths[0][0].size();i++){
-        cout<<time_of_paths[0][0][i]<<" ";
-    }
-    cout<<endl;
+    // cout<<"Time:"<<endl;
+    // for(int i=0;i<time_of_paths[0][0].size();i++){
+    //     cout<<time_of_paths[0][0][i]<<" ";
+    // }
+    // cout<<endl;
 
     map<int,int> deployed_inst;
     map<int,int> time; //map that contains the reach time to a NF in the chain
