@@ -253,8 +253,8 @@ vector <int> dijkstra(int src,int dest, vector<vector<node>> &graph,int throughp
     paths[src].push_back(src);
     minHeap->pos[src]   = src; 
     dist[src] = 0; 
-    decreaseKey(minHeap, src, dist[src]); 
-  
+    decreaseKey(minHeap, src, dist[src]);
+
     // Initially size of min heap is equal to V
     minHeap->size = V; 
   
@@ -325,10 +325,10 @@ struct comparePaths{
     }
 };
 
-vector<vector<int>> YenKSP(vector<vector<node>> &graph,Request request,int K)
+vector<vector<int>> YenKSP(vector<vector<node>> &graph,int s,int d,Request request,int K)
 {
-    int src = request.src;
-    int dest = request.dest;
+    int src = s;
+    int dest = d;
     vector<vector<int>> A(K+1);
     int throughput = request.t_arrival_rate;
     A[0] = dijkstra(src,dest,graph,throughput);
@@ -433,7 +433,7 @@ vector<vector<int>> YenKSP(vector<vector<node>> &graph,Request request,int K)
             //cout<<"totalPath"<<endl;
             //print(totalPath);
             //cout<<endl;
-            if(totalPath.size()!=0)
+            if(totalPath.size()!=0){
             if(totalPath[totalPath.size()-1]!=dest)
             flag=1;
             for(int j=0;j<B.size();j++)
@@ -446,13 +446,15 @@ vector<vector<int>> YenKSP(vector<vector<node>> &graph,Request request,int K)
                 if(A[j]==totalPath)
                 flag=1;
             }
+            }
             if(totalPath.size()==0)
             flag=1;
             if(flag==0)
             B.push_back(totalPath);
         }
-        if(B.size()==0)
-        break;
+        if(B.size()==0){
+            break;
+        }
         //B.sort();
         // vector <int> temp;
         // for(int i=0;i<B.size();i++)
@@ -484,20 +486,26 @@ vector<vector<int>> YenKSP(vector<vector<node>> &graph,Request request,int K)
     //     cout<<endl;
     // }
     vector<vector<int>> temp;
-    // for(int i=1;i<K;i++)
-    // A[i]=B[i];
+    //cout<<"Here\n";
+    if(B.size() != 0){
+        for(int i=1;i<K;i++){
+            //cout<<B[i].size()<<endl;
+            A[i] = B[i];
+        }
+    }
     for(int i=0;i<K;i++)
     {
         if(A[i].size()!=0)
         temp.push_back(A[i]);
-        for(int j=0;j<A[i].size();j++){
-            cout<<A[i][j]<<"->";
-        }
-        cout<<endl;
+        // for(int j=0;j<A[i].size();j++){
+        //     cout<<A[i][j]<<"->";
+        // }
+        // cout<<endl;
     }
-    cout<<"Test:::::::::::::::::::"<<K<<"   "<<temp.size()<<endl;
+    // cout<<"Test:::::::::::::::::::"<<K<<"   "<<temp.size()<<endl;
     B.clear();
     sort(temp.begin(),temp.end(),comparePaths(graph));
+    //cout<<"K::::::::::"<<temp.size()<<endl;
     return temp;
 
 }
