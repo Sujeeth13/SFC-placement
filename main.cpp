@@ -118,7 +118,7 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
     return temp;
 }
 
-void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
+void SFC_embedding(vector<vector<node>> g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
 
     // vector<vector<int>> k_paths = YenKSP(g,request,3);
     // for(int i=0;i<k_paths.size();i++){
@@ -128,6 +128,26 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     //     }
     //     cout<<endl;
     // }
+    map<int,int> deployed_inst;
+    map<int,double> time; //map that contains the reach time to a NF in the chain
+    double dest_time;
+    double pkt_copy=2,pkt_merge=2;
+    //initializing reach time to that NF in the chain to 0
+    vector<vector<vector<int>>> SFC = request.SFC;
+    int src = request.src;
+    int dest = request.dest;
+    double e2e = request.e2e;
+    double t_arrival_rate = request.t_arrival_rate;
+
+    for(int i=0;i<g[src].size();i++){
+        for(int j=0;j<g[g[src][i].id].size();j++){
+            if(g[g[src][i].id][j].id == src)
+                g[g[src][i].id].erase(g[g[src][i].id].begin()+j);
+        }
+    }
+
+    g[dest].clear();
+    
     int K = 2; //the number of K shortest paths
     vector<vector<vector<vector<int>>>> paths(g.size(),vector<vector<vector<int>>>(g.size()));
     cout<<paths.size()<<paths[0].size()<<endl;
@@ -158,16 +178,8 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     // }
     // cout<<endl;
 
-    map<int,int> deployed_inst;
-    map<int,double> time; //map that contains the reach time to a NF in the chain
-    double dest_time;
-    double pkt_copy=2,pkt_merge=2;
-    //initializing reach time to that NF in the chain to 0
-    vector<vector<vector<int>>> SFC = request.SFC;
-    int src = request.src;
-    int dest = request.dest;
-    double e2e = request.e2e;
-    double t_arrival_rate = request.t_arrival_rate;
+
+
     for(int i=0;i<SFC.size();i++){
         for(int j=0;j<SFC[i].size();j++){
             for(int k=0;k<SFC[i][j].size();k++){
@@ -217,6 +229,8 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
         int min_dist = INT_MAX;
         int next_branch_node;
         for(int b=0;b<SFC[i+1].size();b++){
+            if(SFC[i].size() == 1 && b!=SFC[i+1].size()-1)
+                continue;
             next_branch_node = SFC[i+1][b][0];
             min_dist = INT_MAX;
             for(int j=0;j<NF_to_node[next_branch_node].size();j++){
@@ -250,6 +264,40 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
         }
     }
     cout<<"e2e latency:::::::::::"<<dest_time<<endl;
+
+    // layer graph step......
+    for(int i=0;i<SFC.size();i++){
+        if(SFC[i].size() == 1)
+            continue;
+        for(int b=0;b<SFC[i].size()-1;b++){ //checking all branches except critical branch since all function instances have been deployed in the critical branch
+            if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
+                if(i == 0){
+                    for(int b_n=0;b_n<SFC[i+1].size();b_n++){
+                        layer_graph(src,SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                    }
+                }
+                else{
+                    if(i == SFC.size()-1){
+                        layer_graph(SFC[i-1][0][0],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                    }
+                    else{
+                        for(int b_n=0;b_n<SFC[i+1].size();b_n++)
+                            layer_graph(SFC[i-1][0][0],SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                    }
+                }
+            }
+            else{
+                if(i == SFC.size()-1){
+                    layer_graph(SFC[i][b][0],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                }
+                else{
+                    for(int b_n=0;b_n<SFC[i+1].size();b_n++)
+                        layer_graph(SFC[i][b][0],SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                }
+            }
+        }
+    }
+    cout<<"final e2e latency:::::::::::"<<dest_time<<endl;
 }
 
 int main(){

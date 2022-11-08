@@ -14,6 +14,18 @@ class node{
         }
 };
 
+class inst_node{
+    public:
+        int id; /// id of the node
+        vector<int> links; // k shortest links in the instance graph betweem two nodes
+        vector<bool> vis_links; // has the link been visited or not
+        inst_node(int id,vector<int> links,vector<bool> vis_links){
+            this->id = id;
+            this->links = links;
+            this->vis_links = vis_links;
+        }
+};
+
 class f_attr{  //contains the attributes of a network function
     public:
     int id;
@@ -508,4 +520,11 @@ vector<vector<int>> YenKSP(vector<vector<node>> &graph,int s,int d,Request reque
     //cout<<"K::::::::::"<<temp.size()<<endl;
     return temp;
 
+}
+
+void layer_graph(int src,vector<int> funcs,int dest,map<int,double>& time,map<int,int>& deployed_inst,
+vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
+vector<vector<vector<double>>>& time_of_paths){
+
+    
 }
