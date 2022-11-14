@@ -266,6 +266,37 @@ void SFC_embedding(vector<vector<node>> g,vector<node_capacity>& n_resource,vect
     cout<<"e2e latency:::::::::::"<<dest_time<<endl;
 
     // layer graph step......
+    // for(int i=0;i<SFC.size();i++){
+    //     if(SFC[i].size() == 1)
+    //         continue;
+    //     for(int b=0;b<SFC[i].size()-1;b++){ //checking all branches except critical branch since all function instances have been deployed in the critical branch
+    //         if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
+    //             if(i == 0){
+    //                 for(int b_n=0;b_n<SFC[i+1].size();b_n++){
+    //                     layer_graph(l_id(0,-1,src),SFC[i][b],l_id(0,SFC[i+1][b_n][0],deployed_inst[SFC[i+1][b_n][0]]),time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+    //                 }
+    //             }
+    //             else{
+    //                 if(i == SFC.size()-1){
+    //                     layer_graph(l_id(0,SFC[i-1][0][0],deployed_inst[SFC[i-1][0][0]]),SFC[i][b],l_id(0,-1,dest),time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+    //                 }
+    //                 else{
+    //                     for(int b_n=0;b_n<SFC[i+1].size();b_n++)
+    //                         layer_graph(l_id(0,SFC[i-1][0][0],deployed_inst[SFC[i-1][0][0]]),SFC[i][b],l_id(0,SFC[i+1][b_n][0],deployed_inst[SFC[i+1][b_n][0]]),time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+    //                 }
+    //             }
+    //         }
+    //         else{
+    //             if(i == SFC.size()-1){
+    //                 layer_graph(l_id(0,SFC[i][b][0],deployed_inst[SFC[i][b][0]]),SFC[i][b],l_id(0,-1,dest),time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+    //             }
+    //             else{
+    //                 for(int b_n=0;b_n<SFC[i+1].size();b_n++)
+    //                     layer_graph(l_id(0,SFC[i][b][0],deployed_inst[SFC[i][b][0]]),SFC[i][b],l_id(0,SFC[i+1][b_n][0],deployed_inst[SFC[i+1][b_n][0]]),time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+    //             }
+    //         }
+    //     }
+    // }
     for(int i=0;i<SFC.size();i++){
         if(SFC[i].size() == 1)
             continue;
@@ -273,26 +304,26 @@ void SFC_embedding(vector<vector<node>> g,vector<node_capacity>& n_resource,vect
             if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
                 if(i == 0){
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
-                        layer_graph(src,SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                        layer_graph_2(src,SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
                     }
                 }
                 else{
                     if(i == SFC.size()-1){
-                        layer_graph(SFC[i-1][0][0],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                        layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
                     }
                     else{
                         for(int b_n=0;b_n<SFC[i+1].size();b_n++)
-                            layer_graph(SFC[i-1][0][0],SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                            layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
                     }
                 }
             }
             else{
                 if(i == SFC.size()-1){
-                    layer_graph(SFC[i][b][0],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                    layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],dest,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
                 }
                 else{
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++)
-                        layer_graph(SFC[i][b][0],SFC[i][b],SFC[i+1][b_n][0],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
+                        layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths);
                 }
             }
         }

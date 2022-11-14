@@ -2,7 +2,7 @@
 
 using namespace std;
 
-class node{
+class node{   //  graph node
     public:
         int id;   // temporary int 
         double link;   // cost 
@@ -14,22 +14,40 @@ class node{
         }
 };
 
-class inst_node{
+class l_id{  // layer graph node details
     public:
-        int id; /// id of the node
-        vector<int> links; // k shortest links in the instance graph betweem two nodes
+        int level;
+        int func;
+        int node_id;
+        l_id(){}
+        l_id(int level,int func,int node_id){
+            this->level = level;
+            this->func = func;
+            this->node_id = node_id;
+        }
+        l_id(const l_id& a){
+            this->level = a.level;
+            this->func = a.func;
+            this->node_id = a.node_id;
+        }
+        bool operator < (l_id const &a) const{
+            if(node_id == a.node_id){
+                return func < a.func;
+            }
+            return node_id<a.node_id;
+        }
+};
+
+class inst_node{  // layer graph node
+    public:
+        string id; /// id of the node
+        vector<double> links; // k shortest links in the instance graph betweem two nodes
         vector<bool> vis_links; // has the link been visited or not
-        inst_node(int id,vector<int> links,vector<bool> vis_links){
+        inst_node(string id,vector<double> links,vector<bool> vis_links){
             this->id = id;
             this->links = links;
             this->vis_links = vis_links;
         }
-};
-
-class f_attr{  //contains the attributes of a network function
-    public:
-    int id;
-    double processing_t;
 };
 
 class node_capacity{ //contains the list of NFs installed in node and the amount left of each of those instances.
@@ -522,9 +540,150 @@ vector<vector<int>> YenKSP(vector<vector<node>> &graph,int s,int d,Request reque
 
 }
 
-void layer_graph(int src,vector<int> funcs,int dest,map<int,double>& time,map<int,int>& deployed_inst,
+struct mp_comp{
+    bool operator() (const l_id& a,const l_id& b){
+        if(a.node_id == b.node_id){
+            return a.func < b.func;
+        }
+        return a.node_id < b.node_id;
+    }
+};
+// void layer_graph(l_id src,vector<int> funcs,l_id dest,map<int,double>& time,map<int,int>& deployed_inst,
+// vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
+// vector<vector<vector<double>>>& time_of_paths){
+
+//     map<l_id,vector<inst_node>> layer_g(mp_comp);
+//     queue<l_id> q;
+//     int cnt = 1;
+//     //forming the multi graph
+//     for(int j=0;j<NF_to_node[funcs[0]].size();j++){
+//         int id = funcs[0];
+//         int node_id = NF_to_node[funcs[0]][j];
+//         l_id u_id(cnt,id,node_id);
+//         q.push(u_id);
+//         vector<bool> vis(time_of_paths[src.node_id][node_id].size(),false);
+//         inst_node temp_node(u_id,time_of_paths[src.node_id][node_id],vis);
+//         layer_g[src] = temp_node;
+//     }
+
+//     // for(int i=1;i<funcs.size();i++){
+//     //     queue<l_id> next_q;
+//     //     cnt++;
+//     //     while(!q.empty()){
+//     //         l_id prev_id = q.front();
+//     //         q.pop();
+//     //         for(int j=0;j<NF_to_node[funcs[i]].size();j++){
+//     //             int id = funcs[i];
+//     //             int node_id = NF_to_node[funcs[i]][j];
+//     //             l_id u_id(cnt,id,node_id);;
+//     //             next_q.push(u_id);
+//     //             vector<bool> vis(time_of_paths[prev_id.node_id][node_id].size(),false);
+//     //             inst_node temp_node(u_id,time_of_paths[prev_id.node_id][node_id],vis);
+//     //             layer_g[prev_id].push_back(temp_node);
+//     //         }
+//     //     }
+//     //     q = next_q;
+//     // }
+//     // // cnt++;
+//     // for(int j=0;j<NF_to_node[funcs[funcs.size()-1]].size();j++){
+//     //     int id = funcs[funcs.size()-1];
+//     //     int node_id = NF_to_node[funcs[funcs.size()-1]][j];
+//     //     l_id u_id(cnt,id,node_id);
+//     //     dest.level = cnt+1;
+//     //     vector<bool> vis(time_of_paths[node_id][dest.node_id].size(),false);
+//     //     inst_node temp_node(dest,time_of_paths[node_id][dest.node_id],vis);
+//     //     layer_g[u_id].push_back(temp_node);
+//     // }
+
+//     map<l_id,vector<inst_node>>::iterator it;
+//     for(it=layer_g.begin();it!=layer_g.end();it++){
+//         cout<<it->first.func<<"-"<<it->first.node_id<<":\n";
+//         for(int j=0;j<it->second.size();j++){
+//             inst_node t = it->second[j];
+//             for(int i=0;i<t.links.size();i++){
+//                 cout<<" "<<t.id.func<<"-"<<t.id.node_id<<"("<<t.links[i]<<")\n";
+//             }
+//             cout<<endl;
+//         }
+//     }
+// }
+
+vector<int> parse_id(string s){
+    vector<int> ids;
+    string temp = "";
+    for(int i=0;i<s.size();i++){
+        if(s[i] == ';'){
+            ids.push_back(stoi(temp));
+            temp = "";
+        }
+        else{
+            temp += s[i];
+        }
+    }
+    return ids;
+}
+
+void layer_graph_2(int src,vector<int> funcs,int dest,map<int,double>& time,map<int,int>& deployed_inst,
 vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
 vector<vector<vector<double>>>& time_of_paths){
 
-    
+    map<string,vector<inst_node>> layer_g;
+    queue<string> q;
+    int cnt = 1;
+    //forming the multi graph
+    for(int j=0;j<NF_to_node[funcs[0]].size();j++){
+        int id = funcs[0];
+        int node_id = NF_to_node[funcs[0]][j];
+        string u_id;
+        u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+        q.push(u_id);
+        string source  = to_string(cnt-1) + ";" + to_string(-1) + ";" + to_string(src);
+        vector<bool> vis(time_of_paths[src][node_id].size(),false);
+        inst_node temp_node(u_id,time_of_paths[src][node_id],vis);
+        layer_g[source].push_back(temp_node);
+    }
+
+    for(int i=1;i<funcs.size();i++){
+        queue<string> next_q;
+        cnt++;
+        while(!q.empty()){
+            string prev_id = q.front();
+            vector<int> ids = parse_id(prev_id);
+            q.pop();
+            for(int j=0;j<NF_to_node[funcs[i]].size();j++){
+                int id = funcs[i];
+                int node_id = NF_to_node[funcs[i]][j];
+                string u_id;
+                u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+                next_q.push(u_id);
+                vector<bool> vis(time_of_paths[ids.back()][node_id].size(),false);
+                inst_node temp_node(u_id,time_of_paths[ids.back()][node_id],vis);
+                layer_g[prev_id].push_back(temp_node);
+            }
+        }
+        q = next_q;
+    }
+    // cnt++;
+    for(int j=0;j<NF_to_node[funcs[funcs.size()-1]].size();j++){
+        int id = funcs[funcs.size()-1];
+        int node_id = NF_to_node[funcs[funcs.size()-1]][j];
+        string u_id;
+        u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+        vector<bool> vis(time_of_paths[node_id][dest].size(),false);
+        string destination = to_string(cnt) + ";" + to_string(-1) + ";" + to_string(dest);
+        inst_node temp_node(destination,time_of_paths[node_id][dest],vis);
+        layer_g[u_id].push_back(temp_node);
+    }
+
+    map<string,vector<inst_node>>::iterator it;
+    for(it=layer_g.begin();it!=layer_g.end();it++){
+        cout<<it->first<<":\n";
+        for(int j=0;j<it->second.size();j++){
+            inst_node t = it->second[j];
+            for(int i=0;i<t.links.size();i++){
+                cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
+            }
+            cout<<endl;
+        }
+    }
 }
