@@ -622,6 +622,40 @@ vector<int> parse_id(string s){
     }
     return ids;
 }
+int cc =0;
+void dfs(string u,string d,int lev,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<int>>& res,vector<int> temp){
+
+    if (u == d) {
+        res.push_back(temp);
+        return;
+    }
+    else // If current vertex is not destination
+    {
+        // Recur for all the vertices adjacent to current
+        // vertex
+        vector<inst_node>::iterator i;
+        for (i = layer_g[u].begin(); i != layer_g[u].end(); ++i){
+            for(int l=0;l<i->links.size();l++){
+                vector<int> temp2 = temp;
+                vector<int> src_id = parse_id(u);
+                vector<int> dest_id = parse_id(i->id);
+                temp2.insert(temp2.end(),paths[src_id.back()][dest_id.back()][l].begin(),paths[src_id.back()][dest_id.back()][l].end());
+                dfs(i->id,d,lev+1,layer_g,paths,res,temp2);
+                cc++;
+            }
+        }
+    }
+
+}
+
+vector<vector<int>> get_all_paths(string s,string d,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<vector<double>>>& time_of_paths){
+    vector<vector<int>> res;
+    vector<int> temp;
+    int lev = 0;
+    dfs(s,d,lev,layer_g,paths,res,temp);
+    cout<<"Size:::::::::::"<<res.size()<<cc<<endl;
+    return res;
+}
 
 void layer_graph_2(int src,vector<int> funcs,int dest,map<int,double>& time,map<int,int>& deployed_inst,
 vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
@@ -635,9 +669,9 @@ vector<vector<vector<double>>>& time_of_paths){
         int id = funcs[0];
         int node_id = NF_to_node[funcs[0]][j];
         string u_id;
-        u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+        u_id = to_string(cnt) + ";" + to_string(node_id);
         q.push(u_id);
-        string source  = to_string(cnt-1) + ";" + to_string(-1) + ";" + to_string(src);
+        string source  = to_string(cnt-1) + ";" + to_string(src);
         vector<bool> vis(time_of_paths[src][node_id].size(),false);
         inst_node temp_node(u_id,time_of_paths[src][node_id],vis);
         layer_g[source].push_back(temp_node);
@@ -654,7 +688,7 @@ vector<vector<vector<double>>>& time_of_paths){
                 int id = funcs[i];
                 int node_id = NF_to_node[funcs[i]][j];
                 string u_id;
-                u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+                u_id = to_string(cnt) + ";" + to_string(node_id);
                 next_q.push(u_id);
                 vector<bool> vis(time_of_paths[ids.back()][node_id].size(),false);
                 inst_node temp_node(u_id,time_of_paths[ids.back()][node_id],vis);
@@ -668,9 +702,9 @@ vector<vector<vector<double>>>& time_of_paths){
         int id = funcs[funcs.size()-1];
         int node_id = NF_to_node[funcs[funcs.size()-1]][j];
         string u_id;
-        u_id = to_string(cnt) + ";" + to_string(id) + ";" + to_string(node_id);
+        u_id = to_string(cnt) + ";" + to_string(node_id);
         vector<bool> vis(time_of_paths[node_id][dest].size(),false);
-        string destination = to_string(cnt) + ";" + to_string(-1) + ";" + to_string(dest);
+        string destination = to_string(cnt) + ";" + to_string(dest);
         inst_node temp_node(destination,time_of_paths[node_id][dest],vis);
         layer_g[u_id].push_back(temp_node);
     }
@@ -686,4 +720,7 @@ vector<vector<vector<double>>>& time_of_paths){
             cout<<endl;
         }
     }
+    string source = to_string(0) + ";" + to_string(src);
+    string destination = to_string(cnt) + ";" + to_string(dest);
+    vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
 }
