@@ -233,6 +233,8 @@ double add_links(vector<vector<node>>& g,vector<int>& path){ //calculates the li
     int src = path[0];
     for(int i=1;i<path.size();i++){
         for(auto x:g[path[i-1]]){
+            if(x.id == path[i] && path[i-1] == path[i])
+                continue;
             if(x.id == path[i]){
                 time += x.link;
             }
@@ -608,6 +610,16 @@ struct mp_comp{
 //     }
 // }
 
+struct info{
+    public:
+    vector<vector<int>> paths;
+    vector<vector<int>> dep;
+    info(vector<vector<int>> paths,vector<vector<int>> dep){
+        this->paths = paths;
+        this->dep = dep;
+    }
+};
+
 vector<int> parse_id(string s){
     vector<int> ids;
     string temp = "";
@@ -620,13 +632,15 @@ vector<int> parse_id(string s){
             temp += s[i];
         }
     }
+    ids.push_back(stoi(temp));
     return ids;
 }
 int cc =0;
-void dfs(string u,string d,int lev,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<int>>& res,vector<int> temp){
+void dfs(string u,string d,int lev,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<int>>& dep,vector<int> d_temp,vector<vector<int>>& res,vector<int> temp){
 
     if (u == d) {
         res.push_back(temp);
+        dep.push_back(d_temp);
         return;
     }
     else // If current vertex is not destination
@@ -637,10 +651,15 @@ void dfs(string u,string d,int lev,map<string,vector<inst_node>>& layer_g,vector
         for (i = layer_g[u].begin(); i != layer_g[u].end(); ++i){
             for(int l=0;l<i->links.size();l++){
                 vector<int> temp2 = temp;
+                vector<int> d_temp2 = d_temp;
                 vector<int> src_id = parse_id(u);
                 vector<int> dest_id = parse_id(i->id);
-                temp2.insert(temp2.end(),paths[src_id.back()][dest_id.back()][l].begin(),paths[src_id.back()][dest_id.back()][l].end());
-                dfs(i->id,d,lev+1,layer_g,paths,res,temp2);
+                d_temp2.push_back(dest_id.back());
+                if(temp2.size()!=0)
+                    temp2.insert(temp2.end(),paths[src_id.back()][dest_id.back()][l].begin()+1,paths[src_id.back()][dest_id.back()][l].end());
+                else
+                    temp2.insert(temp2.end(),paths[src_id.back()][dest_id.back()][l].begin(),paths[src_id.back()][dest_id.back()][l].end());
+                dfs(i->id,d,lev+1,layer_g,paths,dep,d_temp2,res,temp2);
                 cc++;
             }
         }
@@ -648,18 +667,93 @@ void dfs(string u,string d,int lev,map<string,vector<inst_node>>& layer_g,vector
 
 }
 
-vector<vector<int>> get_all_paths(string s,string d,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<vector<double>>>& time_of_paths){
+info get_all_paths(string s,string d,map<string,vector<inst_node>>& layer_g,vector<vector<vector<vector<int>>>>& paths,vector<vector<vector<double>>>& time_of_paths){
     vector<vector<int>> res;
     vector<int> temp;
+    vector<vector<int>> dep;
+    vector<int> d_temp;
+    vector<int> ids = parse_id(s);
     int lev = 0;
-    dfs(s,d,lev,layer_g,paths,res,temp);
+    cout<<"source::"<<s<<" "<<"Des::"<<d<<endl;
+    dfs(s,d,lev,layer_g,paths,dep,d_temp,res,temp);
     cout<<"Size:::::::::::"<<res.size()<<cc<<endl;
-    return res;
+    info i(res,dep);
+    return i;
 }
 
-void layer_graph_2(int src,vector<int> funcs,int dest,map<int,double>& time,map<int,int>& deployed_inst,
+class comp{
+    public:
+    double time;
+    vector<vector<node>> g;
+    comp(vector<vector<node>>& g,double time){
+        this->g = g;
+        this->time = time;
+    }
+    bool operator()(pair<vector<int>,vector<int>> a,pair<vector<int>,vector<int>> b){
+        double time_a = add_links(g,a.first);
+        double time_b = add_links(g,b.first);
+        if(abs(time_a-time) == abs(time_b-time)){
+            return (time_a-time) <= (time_b - time);
+        }
+        return abs(time_a-time) <= abs(time_b-time);
+    }
+};
+
+void update_BW(vector<vector<node>>& g,vector<int> path,double arrival){
+    if(path.size() <= 1)
+        return;
+    int prev,curr;
+    prev = path[0];
+    for(int i=1;i<path.size();i++){
+        curr = path[i];
+        int j=0;
+        while(j < g[prev].size() && g[prev][j].id != curr)
+            j++;
+        g[prev][j].available_bandwidth -= arrival;
+        j=0;
+        while(j < g[curr].size() && g[curr][j].id != prev)
+            j++;
+        g[curr][j].available_bandwidth -= arrival;
+        prev = curr;
+    }
+}
+
+bool is_available_BW(vector<vector<node>>& g,vector<int> path,double arrival){
+    if(path.size() <= 1)
+        return true;
+    int prev,curr;
+    prev = path[0];
+    for(int i=1;i<path.size();i++){
+        curr = path[i];
+        int j=0;
+        while(j < g[prev].size() && g[prev][j].id != curr)
+            j++;
+        if(g[prev][j].available_bandwidth < arrival){
+            return false;
+        }
+        prev = curr;
+    }
+    return true;
+}
+
+void update_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
+    for(int i=0;i<dep.size();i++){
+        n_resource[dep[i]].deployed_NF[funcs[i]] -= arrival;
+    }
+}
+
+bool is_available_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
+    for(int i=0;i<dep.size();i++){
+        if(n_resource[dep[i]].deployed_NF[funcs[i]] < arrival){
+            return false;
+        }
+    }
+    return true;
+}
+
+void layer_graph_2(int src,vector<int> funcs,int dest,vector<vector<node>>& g,map<int,double>& time,map<int,int>& deployed_inst,
 vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
-vector<vector<vector<double>>>& time_of_paths){
+vector<vector<vector<double>>>& time_of_paths,Request request){
 
     map<string,vector<inst_node>> layer_g;
     queue<string> q;
@@ -704,7 +798,7 @@ vector<vector<vector<double>>>& time_of_paths){
         string u_id;
         u_id = to_string(cnt) + ";" + to_string(node_id);
         vector<bool> vis(time_of_paths[node_id][dest].size(),false);
-        string destination = to_string(cnt) + ";" + to_string(dest);
+        string destination = to_string(cnt+1) + ";" + to_string(dest);
         inst_node temp_node(destination,time_of_paths[node_id][dest],vis);
         layer_g[u_id].push_back(temp_node);
     }
@@ -721,6 +815,60 @@ vector<vector<vector<double>>>& time_of_paths){
         }
     }
     string source = to_string(0) + ";" + to_string(src);
-    string destination = to_string(cnt) + ";" + to_string(dest);
-    vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
+    string destination = to_string(cnt+1) + ";" + to_string(dest);
+    // vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
+    info i = get_all_paths(source,destination,layer_g,paths,time_of_paths);
+    vector<pair<vector<int>,vector<int> > > sorter;
+    for(int k=0;k<i.paths.size();k++){
+        sorter.push_back(make_pair(i.paths[k],i.dep[k]));
+    }
+    // wil have to update the time;;;;;;;;;;;;;;;;;;;;;;;;
+    sort(sorter.begin(),sorter.end(),comp(g,44.0));
+
+    vector<vector<int>> layer_paths;
+    vector<vector<int>> layer_dep;
+    for(int i=0;i<sorter.size();i++){
+        layer_paths.push_back(sorter[i].first);
+        layer_dep.push_back(sorter[i].second);
+    }    
+    i.paths = layer_paths;
+    i.dep = layer_dep;
+    for(int i=0;i<layer_paths.size();i++){
+        for(int j=0;j<layer_paths[i].size();j++){
+            cout<<layer_paths[i][j]<<"->";
+        }
+        cout<<endl;
+    }
+    vector<int> layer_paths_time(layer_paths.size());
+    for(int i=0;i<layer_paths.size();i++){
+        layer_paths_time[i] = add_links(g,layer_paths[i]);
+        cout<<"Time::::"<<layer_paths_time[i]<<endl;
+    }
+    
+    for(int i=0;i<layer_dep.size();i++){
+        for(int j=0;j<layer_dep[i].size();j++){
+            cout<<layer_dep[i][j]<<"->";
+        }
+        cout<<endl;
+    }
+
+    //vector<vector<node>> temp_g = g;
+    int p;
+    for(p=0;p<i.paths.size();p++){
+        i.dep[p].pop_back();
+        if(is_available_BW(g,i.paths[p],request.t_arrival_rate) && is_available_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate)){
+            //do the check for time update
+            break;
+        }
+    }
+    if(p == i.paths.size()){
+        //somehow drop the request
+        return;
+    }
+    update_BW(g,i.paths[p],request.t_arrival_rate);
+    update_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate);
+    for(int k=0;k<i.dep[p].size();k++){
+        deployed_inst[funcs[k]] = i.dep[p][k];
+        //cout<<funcs[k]<<":::::::::"<<i.dep[p][k]<<endl;
+    }
 }
