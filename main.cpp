@@ -119,15 +119,7 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
 }
 
 void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request){
-
-    // vector<vector<int>> k_paths = YenKSP(g,request,3);
-    // for(int i=0;i<k_paths.size();i++){
-    //     cout<<"Path"<<i<<":"<<endl;
-    //     for(int j=0;j<k_paths[i].size();j++){
-    //         cout<<k_paths[i][j]<<"->";
-    //     }
-    //     cout<<endl;
-    // }
+    
     map<int,int> deployed_inst;
     map<int,double> time; //map that contains the reach time to a NF in the chain
     double dest_time;
@@ -205,29 +197,59 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
         critical_branch_node[i] = SFC[i][SFC[i].size()-1][SFC[i][SFC[i].size()-1].size()-1];
     }
     critical_branch_node[0] = SFC[0][SFC[0].size()-1][0];
-    cout<<"Error::::"<<critical_branch_node[0]<<endl;
     int inst_0;
     int min_dist = INT_MAX;
+    vector<int> min_path;
     cout<<"Error::::"<<NF_to_node[critical_branch_node[0]].size()<<endl;
     for(int i=0;i<NF_to_node[critical_branch_node[0]].size();i++){
         if(n_resource[NF_to_node[critical_branch_node[0]][i]].NF_left[critical_branch_node[0]] > t_arrival_rate){
             if(time_of_paths[src][NF_to_node[critical_branch_node[0]][i]][0] < min_dist){
                 min_dist = time_of_paths[src][NF_to_node[critical_branch_node[0]][i]][0];
+                min_path = paths[src][NF_to_node[critical_branch_node[0]][i]][0];
                 inst_0 = NF_to_node[critical_branch_node[0]][i];
                 cout<<"All inst::::"<<inst_0<<endl;
             }
         }
     }
+    if(min_dist == INT_MAX) // could not find a path
+        return;
+    vector<vector<node>> temp_g = g;
+    vector<node_capacity> temp_n_resource = n_resource;
     deployed_inst[critical_branch_node[0]] = inst_0;
     time[critical_branch_node[0]] = min_dist/*link delay*/ + NFs[critical_branch_node[0]]/*function delay*/ +(SFC[1].size()-1)*(pkt_copy)/*copy delay*/ ;
+    update_BW(temp_g,min_path,request.t_arrival_rate);
+    update_resource(temp_n_resource,vector<int>(1,critical_branch_node[0]),vector<int>(1,inst_0),request.t_arrival_rate);
+     //call the shortest paths again since network got changed
+    for(int i=0;i<g.size();i++){
+        for(int j=0;j<g.size();j++){
+            vector<vector<int>> k_paths;
+            if(i == j){
+                for(int k=0;k<K;k++){
+                    vector<int> temp;
+                    temp.push_back(i);
+                    k_paths.push_back(temp);
+                }
+            }
+            else{
+                //cout<<"here\n";
+                k_paths = YenKSP(temp_g,i,j,request,K);
+                //cout<<"here1\n";
+            }
+            paths[i][j] = k_paths;
+        }
+    }
+    time_of_paths = calc_time(temp_g,paths);
+
     cout<<"inst:::"<<inst_0<<endl;
     cout<<"Min dis:::"<<min_dist<<endl;
     cout<<"F delay:::"<<NFs[critical_branch_node[0]]<<endl;
     cout<<"Copy delay:::"<<(SFC[1].size()-1)*(pkt_copy)<<endl;
     cout<<"initial::::"<<time[critical_branch_node[0]]<<endl;
+
     for(int i=0;i<SFC.size()-1;i++){
         int inst;
         int min_dist = INT_MAX;
+        vector<int> min_path;
         int next_branch_node;
         for(int b=0;b<SFC[i+1].size();b++){
             if(SFC[i].size() == 1 && b!=SFC[i+1].size()-1)
@@ -236,18 +258,45 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             min_dist = INT_MAX;
             for(int j=0;j<NF_to_node[next_branch_node].size();j++){
                 if(n_resource[NF_to_node[next_branch_node][j]].NF_left[next_branch_node] > t_arrival_rate){
+                    if(time_of_paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]].size() == 0)
+                        continue;
                     if(time_of_paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]][0] < min_dist){
                         min_dist = time_of_paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]][0];
                         // for(int a=0;a<paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]][0].size();a++){
                         //     cout<<paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]][0][a]<<"->";
                         // }
                         // cout<<endl;
+                        min_path = paths[deployed_inst[critical_branch_node[i]]][NF_to_node[next_branch_node][j]][0];
                         inst = NF_to_node[next_branch_node][j];
                     }
                 }
             }
+            if(min_dist == INT_MAX)
+                return;
             deployed_inst[next_branch_node] = inst;
             time[next_branch_node] = time[critical_branch_node[i]] + min_dist/*link delay*/ + NFs[next_branch_node]/*function delay*/ +(SFC[i].size()-1)*(pkt_merge)/*merge delay*/ ;
+            update_BW(temp_g,min_path,request.t_arrival_rate);
+            update_resource(temp_n_resource,vector<int>(1,next_branch_node),vector<int>(1,inst),request.t_arrival_rate);
+            for(int i=0;i<g.size();i++){
+                for(int j=0;j<g.size();j++){
+                    vector<vector<int>> k_paths;
+                    if(i == j){
+                        for(int k=0;k<K;k++){
+                            vector<int> temp;
+                            temp.push_back(i);
+                            k_paths.push_back(temp);
+                        }
+                    }
+                    else{
+                        //cout<<"here\n";
+                        k_paths = YenKSP(temp_g,i,j,request,K);
+                        //cout<<"here1\n";
+                    }
+                    paths[i][j] = k_paths;
+                }
+            }
+            time_of_paths = calc_time(temp_g,paths);
+
                 cout<<"Min dis:::"<<min_dist<<endl;
                 cout<<"F delay:::"<<NFs[next_branch_node]<<endl;
                 cout<<"Copy delay:::"<<(SFC[i].size()-1)*(pkt_merge)<<endl;
@@ -256,6 +305,8 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
                 time[next_branch_node] += (SFC[i+2].size()-1)*(pkt_copy);
         }
     }
+    if(time_of_paths[deployed_inst[critical_branch_node[SFC.size()-1]]][dest].size()==0)
+        return;
     dest_time = time[critical_branch_node[SFC.size()-1]] + time_of_paths[deployed_inst[critical_branch_node[SFC.size()-1]]][dest][0] + (SFC[SFC.size()-1].size()-1)*(pkt_merge);
     for(int i=0;i<SFC.size();i++){
         for(int j=0;j<SFC[i].size();j++){
@@ -305,17 +356,17 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
                 if(i == 0){
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
-                        layer_graph_2(src,SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],g,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths,request);
+                        layer_graph_2(src,SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request);
                     }
                 }
                 else{
                     if(i == SFC.size()-1){
-                        layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],dest,g,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths,request);
+                        layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request);
                     }
                     else{
                         for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                             cout<<"HHHHHHHHHHHHHHHHHHHHHHHH:"<<b_n<<endl;
-                            layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],g,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths,request);
+                            layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request);
                             cout<<"SSSSSSSSSSSSSS::"<<deployed_inst[SFC[i-1][0][0]]<<"DDDDDDDDDDDDDDDD::"<<deployed_inst[SFC[i+1][b_n][0]]<<endl;
                         }
                     }
@@ -323,15 +374,18 @@ void SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             }
             else{
                 if(i == SFC.size()-1){
-                    layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],dest,g,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths,request);
+                    layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request);
                 }
                 else{
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++)
-                        layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],g,time,deployed_inst,NF_to_node,NFs,n_resource,paths,time_of_paths,request);
+                        layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request);
                 }
             }
         }
     }
+
+    g = temp_g;
+    n_resource = temp_n_resource;
     cout<<"Check:::::::::"<<deployed_inst[0]<<endl;
     for(int i=0;i<SFC.size();i++){
         for(int j=0;j<SFC[i].size();j++){
@@ -356,6 +410,7 @@ int main(){
 
     fin>>funcs>>n_of_f_instances;
     fin>>N>>M;
+    fin>>n_of_requests;
 
     vector<vector<node>> g(N); //network topology
     vector<node_capacity> n_resource(N); //tells all the function instances deployed in a node in the topology
@@ -369,8 +424,10 @@ int main(){
         NFs[f_id] = p_time;
     }
     vector<vector<vector<int>>> SFC{{{0}},{{1},{2},{3}},{{4}}};
-
+    vector<vector<vector<int>>> SFC1{{{0}},{{1},{2},{3}},{{4}}};
     SFC = bin(SFC,NFs);
+    SFC1 = bin(SFC1,NFs);
+
     for(int i=0;i<SFC.size();i++){
         for(int j=0;j<SFC[i].size();j++){
             for(int k=0;k<SFC[i][j].size();k++){
@@ -387,7 +444,7 @@ int main(){
         int node_id;
         fin>>node_id>>f_id>>time;
         // node_capacity temp(f_id,time);
-        n_resource[node_id].NF_left[f_id] = 50;
+        n_resource[node_id].NF_left[f_id] = 100;
         n_resource[node_id].deployed_NF[f_id] = time;
         NF_to_node[f_id].push_back(node_id);
     }
@@ -426,15 +483,34 @@ int main(){
             cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].link<<")"<<endl;
         }
     }
+
+    // for(int i=0;i<n_of_requests;i++){
+    //     Request request(0,6,SFC,270,12);
+    //     requests.push_back(request);
+    // }
     Request request(0,6,SFC,270,12);
-    SFC_embedding(g,n_resource,NF_to_node,NFs,request);
+    Request request1(0,6,SFC,270,12);
+    requests[0] = request;
+    requests[1] = request1;
+    //do some sort on the requests
+    for(int i=0;i<n_of_requests;i++){
+        SFC_embedding(g,n_resource,NF_to_node,NFs,requests[i]);
+    }
 
     for(int i=0;i<g.size();i++){
         for(int j=0;j<g[i].size();j++){
             cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].available_bandwidth<<")"<<endl;
         }
     }
-
+    cout<<"Node to funcs"<<endl;
+    for(int i=0;i<N;i++){
+        cout<<i<<":"<<endl;
+        map<int,double>::iterator it;
+        for(it=n_resource[i].NF_left.begin();it!=n_resource[i].NF_left.end();it++){
+            cout<<it->first+1<<":"<<it->second<<endl;
+        }
+        cout<<endl;
+    }
     // int K = 2; //the number of K shortest paths
     // vector<vector<vector<vector<int>>>> paths(g.size(),vector<vector<vector<int>>>(g.size()));
     // cout<<paths.size()<<paths[0].size()<<endl;

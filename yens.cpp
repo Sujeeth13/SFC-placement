@@ -550,65 +550,6 @@ struct mp_comp{
         return a.node_id < b.node_id;
     }
 };
-// void layer_graph(l_id src,vector<int> funcs,l_id dest,map<int,double>& time,map<int,int>& deployed_inst,
-// vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
-// vector<vector<vector<double>>>& time_of_paths){
-
-//     map<l_id,vector<inst_node>> layer_g(mp_comp);
-//     queue<l_id> q;
-//     int cnt = 1;
-//     //forming the multi graph
-//     for(int j=0;j<NF_to_node[funcs[0]].size();j++){
-//         int id = funcs[0];
-//         int node_id = NF_to_node[funcs[0]][j];
-//         l_id u_id(cnt,id,node_id);
-//         q.push(u_id);
-//         vector<bool> vis(time_of_paths[src.node_id][node_id].size(),false);
-//         inst_node temp_node(u_id,time_of_paths[src.node_id][node_id],vis);
-//         layer_g[src] = temp_node;
-//     }
-
-//     // for(int i=1;i<funcs.size();i++){
-//     //     queue<l_id> next_q;
-//     //     cnt++;
-//     //     while(!q.empty()){
-//     //         l_id prev_id = q.front();
-//     //         q.pop();
-//     //         for(int j=0;j<NF_to_node[funcs[i]].size();j++){
-//     //             int id = funcs[i];
-//     //             int node_id = NF_to_node[funcs[i]][j];
-//     //             l_id u_id(cnt,id,node_id);;
-//     //             next_q.push(u_id);
-//     //             vector<bool> vis(time_of_paths[prev_id.node_id][node_id].size(),false);
-//     //             inst_node temp_node(u_id,time_of_paths[prev_id.node_id][node_id],vis);
-//     //             layer_g[prev_id].push_back(temp_node);
-//     //         }
-//     //     }
-//     //     q = next_q;
-//     // }
-//     // // cnt++;
-//     // for(int j=0;j<NF_to_node[funcs[funcs.size()-1]].size();j++){
-//     //     int id = funcs[funcs.size()-1];
-//     //     int node_id = NF_to_node[funcs[funcs.size()-1]][j];
-//     //     l_id u_id(cnt,id,node_id);
-//     //     dest.level = cnt+1;
-//     //     vector<bool> vis(time_of_paths[node_id][dest.node_id].size(),false);
-//     //     inst_node temp_node(dest,time_of_paths[node_id][dest.node_id],vis);
-//     //     layer_g[u_id].push_back(temp_node);
-//     // }
-
-//     map<l_id,vector<inst_node>>::iterator it;
-//     for(it=layer_g.begin();it!=layer_g.end();it++){
-//         cout<<it->first.func<<"-"<<it->first.node_id<<":\n";
-//         for(int j=0;j<it->second.size();j++){
-//             inst_node t = it->second[j];
-//             for(int i=0;i<t.links.size();i++){
-//                 cout<<" "<<t.id.func<<"-"<<t.id.node_id<<"("<<t.links[i]<<")\n";
-//             }
-//             cout<<endl;
-//         }
-//     }
-// }
 
 struct info{
     public:
@@ -738,13 +679,13 @@ bool is_available_BW(vector<vector<node>>& g,vector<int> path,double arrival){
 
 void update_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
     for(int i=0;i<dep.size();i++){
-        n_resource[dep[i]].deployed_NF[funcs[i]] -= arrival;
+        n_resource[dep[i]].NF_left[funcs[i]] -= arrival;
     }
 }
 
 bool is_available_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
     for(int i=0;i<dep.size();i++){
-        if(n_resource[dep[i]].deployed_NF[funcs[i]] < arrival){
+        if(n_resource[dep[i]].NF_left[funcs[i]] < arrival){
             return false;
         }
     }
