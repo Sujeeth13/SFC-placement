@@ -78,6 +78,15 @@ class Request{  //represents the parameters of the SFC request
     }
 };
 
+class Result{
+    public:
+        double mean_latency;
+        double mean_PD;
+        Result(){
+            this->mean_latency = 0;
+            this->mean_PD = 0;
+        }
+};
 void print(std::vector <int> const &a) {
    std::cout << "The vector elements are : ";
 
@@ -645,6 +654,10 @@ void update_BW(vector<vector<node>>& g,vector<int> path,double arrival){
         return;
     int prev,curr;
     prev = path[0];
+    for(int i=0;i<path.size();i++){
+        cout<<path[i]<<"->";
+    }
+    cout<<endl;
     for(int i=1;i<path.size();i++){
         curr = path[i];
         int j=0;
@@ -654,7 +667,8 @@ void update_BW(vector<vector<node>>& g,vector<int> path,double arrival){
         j=0;
         while(j < g[curr].size() && g[curr][j].id != prev)
             j++;
-        g[curr][j].available_bandwidth -= arrival;
+        if(j!=g[curr].size())
+            g[curr][j].available_bandwidth -= arrival;
         prev = curr;
     }
 }
@@ -678,13 +692,13 @@ bool is_available_BW(vector<vector<node>>& g,vector<int> path,double arrival){
 }
 
 void update_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
-    for(int i=0;i<dep.size();i++){
+    for(int i=0;i<dep.size()-1;i++){
         n_resource[dep[i]].NF_left[funcs[i]] -= arrival;
     }
 }
 
 bool is_available_resource(vector<node_capacity>& n_resource,vector<int> funcs,vector<int> dep,double arrival){
-    for(int i=0;i<dep.size();i++){
+    for(int i=0;i<dep.size()-1;i++){
         if(n_resource[dep[i]].NF_left[funcs[i]] < arrival){
             return false;
         }
@@ -692,10 +706,14 @@ bool is_available_resource(vector<node_capacity>& n_resource,vector<int> funcs,v
     return true;
 }
 
-void layer_graph_2(int src,vector<int> funcs,int dest,vector<vector<node>>& g,map<int,double>& time,map<int,int>& deployed_inst,
+bool layer_graph_2(int src,vector<int> funcs,int dest,vector<vector<node>>& g,map<int,double>& time,map<int,int>& deployed_inst,
 vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
-vector<vector<vector<double>>>& time_of_paths,Request request){
+vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,double& diff,double& max_tt){
 
+    for(int i=0;i<funcs.size();i++){
+        diff -= NFs[funcs[i]];
+    }
+    cout<<"FINAL_DIFF::::::"<<diff<<endl;
     map<string,vector<inst_node>> layer_g;
     queue<string> q;
     int cnt = 1;
@@ -764,7 +782,7 @@ vector<vector<vector<double>>>& time_of_paths,Request request){
         sorter.push_back(make_pair(i.paths[k],i.dep[k]));
     }
     // wil have to update the time;;;;;;;;;;;;;;;;;;;;;;;;
-    sort(sorter.begin(),sorter.end(),comp(g,44.0));
+    sort(sorter.begin(),sorter.end(),comp(g,diff));
 
     vector<vector<int>> layer_paths;
     vector<vector<int>> layer_dep;
@@ -794,6 +812,7 @@ vector<vector<vector<double>>>& time_of_paths,Request request){
     }
 
     //vector<vector<node>> temp_g = g;
+    cout<<"Here11111"<<endl;
     int p;
     for(p=0;p<i.paths.size();p++){
         i.dep[p].pop_back();
@@ -802,14 +821,165 @@ vector<vector<vector<double>>>& time_of_paths,Request request){
             break;
         }
     }
+    cout<<"Here222222"<<endl;
     if(p == i.paths.size()){
         //somehow drop the request
-        return;
+        return false;
+    }
+    double tt = add_links(g,i.paths[p]);
+    result.mean_PD += abs(tt - diff);
+    cout<<"TTT:::::::"<<tt<<endl;
+    if(tt > diff){
+        if(tt - diff > max_tt)
+            max_tt = tt - diff;
     }
     update_BW(g,i.paths[p],request.t_arrival_rate);
+    cout<<"Here12121"<<endl;
     update_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate);
+    cout<<"Here333333"<<endl;
     for(int k=0;k<i.dep[p].size();k++){
         deployed_inst[funcs[k]] = i.dep[p][k];
         //cout<<funcs[k]<<":::::::::"<<i.dep[p][k]<<endl;
     }
+    cout<<"Here4444"<<endl;
+    return true;
+}
+
+bool layer_graph(int src,vector<int> funcs,int dest,vector<vector<node>>& g,map<int,double>& time,map<int,int>& deployed_inst,
+vector<vector<int>>& NF_to_node,map<int,double>& NFs,vector<node_capacity>& n_resource,vector<vector<vector<vector<int>>>>& paths,
+vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,double& diff,double& max_tt){
+
+    for(int i=0;i<funcs.size();i++){
+        diff -= NFs[funcs[i]];
+    }
+    cout<<"FINAL_DIFF::::::"<<diff<<endl;
+    map<string,vector<inst_node>> layer_g;
+    queue<string> q;
+    int cnt = 1;
+    //forming the multi graph
+    for(int j=0;j<NF_to_node[funcs[0]].size();j++){
+        int id = funcs[0];
+        int node_id = NF_to_node[funcs[0]][j];
+        string u_id;
+        u_id = to_string(cnt) + ";" + to_string(node_id);
+        q.push(u_id);
+        string source  = to_string(cnt-1) + ";" + to_string(src);
+        vector<bool> vis(time_of_paths[src][node_id].size(),false);
+        inst_node temp_node(u_id,time_of_paths[src][node_id],vis);
+        layer_g[source].push_back(temp_node);
+    }
+
+    for(int i=1;i<funcs.size();i++){
+        queue<string> next_q;
+        cnt++;
+        while(!q.empty()){
+            string prev_id = q.front();
+            vector<int> ids = parse_id(prev_id);
+            q.pop();
+            for(int j=0;j<NF_to_node[funcs[i]].size();j++){
+                int id = funcs[i];
+                int node_id = NF_to_node[funcs[i]][j];
+                string u_id;
+                u_id = to_string(cnt) + ";" + to_string(node_id);
+                next_q.push(u_id);
+                vector<bool> vis(time_of_paths[ids.back()][node_id].size(),false);
+                inst_node temp_node(u_id,time_of_paths[ids.back()][node_id],vis);
+                layer_g[prev_id].push_back(temp_node);
+            }
+        }
+        q = next_q;
+    }
+    // cnt++;
+    for(int j=0;j<NF_to_node[funcs[funcs.size()-1]].size();j++){
+        int id = funcs[funcs.size()-1];
+        int node_id = NF_to_node[funcs[funcs.size()-1]][j];
+        string u_id;
+        u_id = to_string(cnt) + ";" + to_string(node_id);
+        vector<bool> vis(time_of_paths[node_id][dest].size(),false);
+        string destination = to_string(cnt+1) + ";" + to_string(dest);
+        inst_node temp_node(destination,time_of_paths[node_id][dest],vis);
+        layer_g[u_id].push_back(temp_node);
+    }
+
+    map<string,vector<inst_node>>::iterator it;
+    for(it=layer_g.begin();it!=layer_g.end();it++){
+        cout<<it->first<<":\n";
+        for(int j=0;j<it->second.size();j++){
+            inst_node t = it->second[j];
+            for(int i=0;i<t.links.size();i++){
+                cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
+            }
+            cout<<endl;
+        }
+    }
+    string source = to_string(0) + ";" + to_string(src);
+    string destination = to_string(cnt+1) + ";" + to_string(dest);
+    // vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
+    info i = get_all_paths(source,destination,layer_g,paths,time_of_paths);
+    vector<pair<vector<int>,vector<int> > > sorter;
+    for(int k=0;k<i.paths.size();k++){
+        sorter.push_back(make_pair(i.paths[k],i.dep[k]));
+    }
+    // wil have to update the time;;;;;;;;;;;;;;;;;;;;;;;;
+    sort(sorter.begin(),sorter.end(),comp(g,0));
+
+    vector<vector<int>> layer_paths;
+    vector<vector<int>> layer_dep;
+    for(int i=0;i<sorter.size();i++){
+        layer_paths.push_back(sorter[i].first);
+        layer_dep.push_back(sorter[i].second);
+    }    
+    i.paths = layer_paths;
+    i.dep = layer_dep;
+    for(int i=0;i<layer_paths.size();i++){
+        for(int j=0;j<layer_paths[i].size();j++){
+            cout<<layer_paths[i][j]<<"->";
+        }
+        cout<<endl;
+    }
+    vector<int> layer_paths_time(layer_paths.size());
+    for(int i=0;i<layer_paths.size();i++){
+        layer_paths_time[i] = add_links(g,layer_paths[i]);
+        cout<<"Time::::"<<layer_paths_time[i]<<endl;
+    }
+    
+    for(int i=0;i<layer_dep.size();i++){
+        for(int j=0;j<layer_dep[i].size();j++){
+            cout<<layer_dep[i][j]<<"->";
+        }
+        cout<<endl;
+    }
+
+    //vector<vector<node>> temp_g = g;
+    cout<<"Here11111"<<endl;
+    int p;
+    for(p=0;p<i.paths.size();p++){
+        i.dep[p].pop_back();
+        if(is_available_BW(g,i.paths[p],request.t_arrival_rate) && is_available_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate)){
+            //do the check for time update
+            break;
+        }
+    }
+    cout<<"Here222222"<<endl;
+    if(p == i.paths.size()){
+        //somehow drop the request
+        return false;
+    }
+    double tt = add_links(g,i.paths[p]);
+    result.mean_PD += abs(tt - diff);
+    cout<<"TTT:::::::"<<tt<<endl;
+    if(tt > diff){
+        if(tt - diff > max_tt)
+            max_tt = tt - diff;
+    }
+    update_BW(g,i.paths[p],request.t_arrival_rate);
+    cout<<"Here12121"<<endl;
+    update_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate);
+    cout<<"Here333333"<<endl;
+    for(int k=0;k<i.dep[p].size();k++){
+        deployed_inst[funcs[k]] = i.dep[p][k];
+        //cout<<funcs[k]<<":::::::::"<<i.dep[p][k]<<endl;
+    }
+    cout<<"Here4444"<<endl;
+    return true;
 }
