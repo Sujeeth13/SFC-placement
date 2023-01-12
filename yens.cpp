@@ -7,10 +7,12 @@ class node{   //  graph node
         int id;   // temporary int 
         double link;   // cost 
         double available_bandwidth;     // bandwith
+        double init_bw;
         node(int id,double link,double bw){
             this->id = id;
             this->link = link;
             this->available_bandwidth = bw;
+            this->init_bw = bw;
         }
 };
 
@@ -654,10 +656,12 @@ void update_BW(vector<vector<node>>& g,vector<int> path,double arrival){
         return;
     int prev,curr;
     prev = path[0];
-    for(int i=0;i<path.size();i++){
-        cout<<path[i]<<"->";
-    }
-    cout<<endl;
+
+    // for(int i=0;i<path.size();i++){
+    //     cout<<path[i]<<"->";
+    // }
+    // cout<<endl;
+
     for(int i=1;i<path.size();i++){
         curr = path[i];
         int j=0;
@@ -763,16 +767,17 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
     }
 
     map<string,vector<inst_node>>::iterator it;
-    for(it=layer_g.begin();it!=layer_g.end();it++){
-        cout<<it->first<<":\n";
-        for(int j=0;j<it->second.size();j++){
-            inst_node t = it->second[j];
-            for(int i=0;i<t.links.size();i++){
-                cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
-            }
-            cout<<endl;
-        }
-    }
+    // for(it=layer_g.begin();it!=layer_g.end();it++){
+    //     cout<<it->first<<":\n";
+    //     for(int j=0;j<it->second.size();j++){
+    //         inst_node t = it->second[j];
+    //         for(int i=0;i<t.links.size();i++){
+    //             cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
+    //         }
+    //         cout<<endl;
+    //     }
+    // }
+
     string source = to_string(0) + ";" + to_string(src);
     string destination = to_string(cnt+1) + ";" + to_string(dest);
     // vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
@@ -792,27 +797,29 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
     }    
     i.paths = layer_paths;
     i.dep = layer_dep;
-    for(int i=0;i<layer_paths.size();i++){
-        for(int j=0;j<layer_paths[i].size();j++){
-            cout<<layer_paths[i][j]<<"->";
-        }
-        cout<<endl;
-    }
+
+    // for(int i=0;i<layer_paths.size();i++){
+    //     for(int j=0;j<layer_paths[i].size();j++){
+    //         cout<<layer_paths[i][j]<<"->";
+    //     }
+    //     cout<<endl;
+    // }
+
     vector<int> layer_paths_time(layer_paths.size());
-    for(int i=0;i<layer_paths.size();i++){
-        layer_paths_time[i] = add_links(g,layer_paths[i]);
-        cout<<"Time::::"<<layer_paths_time[i]<<endl;
-    }
     
-    for(int i=0;i<layer_dep.size();i++){
-        for(int j=0;j<layer_dep[i].size();j++){
-            cout<<layer_dep[i][j]<<"->";
-        }
-        cout<<endl;
-    }
+    // for(int i=0;i<layer_paths.size();i++){
+    //     layer_paths_time[i] = add_links(g,layer_paths[i]);
+    //     cout<<"Time::::"<<layer_paths_time[i]<<endl;
+    // }
+    
+    // for(int i=0;i<layer_dep.size();i++){
+    //     for(int j=0;j<layer_dep[i].size();j++){
+    //         cout<<layer_dep[i][j]<<"->";
+    //     }
+    //     cout<<endl;
+    // }
 
     //vector<vector<node>> temp_g = g;
-    cout<<"Here11111"<<endl;
     int p;
     for(p=0;p<i.paths.size();p++){
         i.dep[p].pop_back();
@@ -821,7 +828,6 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
             break;
         }
     }
-    cout<<"Here222222"<<endl;
     if(p == i.paths.size()){
         //somehow drop the request
         return false;
@@ -834,14 +840,11 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
             max_tt = tt - diff;
     }
     update_BW(g,i.paths[p],request.t_arrival_rate);
-    cout<<"Here12121"<<endl;
     update_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate);
-    cout<<"Here333333"<<endl;
     for(int k=0;k<i.dep[p].size();k++){
         deployed_inst[funcs[k]] = i.dep[p][k];
         //cout<<funcs[k]<<":::::::::"<<i.dep[p][k]<<endl;
     }
-    cout<<"Here4444"<<endl;
     return true;
 }
 
@@ -902,16 +905,18 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
     }
 
     map<string,vector<inst_node>>::iterator it;
-    for(it=layer_g.begin();it!=layer_g.end();it++){
-        cout<<it->first<<":\n";
-        for(int j=0;j<it->second.size();j++){
-            inst_node t = it->second[j];
-            for(int i=0;i<t.links.size();i++){
-                cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
-            }
-            cout<<endl;
-        }
-    }
+
+    // for(it=layer_g.begin();it!=layer_g.end();it++){
+    //     cout<<it->first<<":\n";
+    //     for(int j=0;j<it->second.size();j++){
+    //         inst_node t = it->second[j];
+    //         for(int i=0;i<t.links.size();i++){
+    //             cout<<" "<<t.id<<"("<<t.links[i]<<")\n";
+    //         }
+    //         cout<<endl;
+    //     }
+    // }
+
     string source = to_string(0) + ";" + to_string(src);
     string destination = to_string(cnt+1) + ";" + to_string(dest);
     // vector<vector<int>> layer_paths = get_all_paths(source,destination,layer_g,paths,time_of_paths);
@@ -931,27 +936,29 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
     }    
     i.paths = layer_paths;
     i.dep = layer_dep;
-    for(int i=0;i<layer_paths.size();i++){
-        for(int j=0;j<layer_paths[i].size();j++){
-            cout<<layer_paths[i][j]<<"->";
-        }
-        cout<<endl;
-    }
+
+    // for(int i=0;i<layer_paths.size();i++){
+    //     for(int j=0;j<layer_paths[i].size();j++){
+    //         cout<<layer_paths[i][j]<<"->";
+    //     }
+    //     cout<<endl;
+    // }
+
     vector<int> layer_paths_time(layer_paths.size());
-    for(int i=0;i<layer_paths.size();i++){
-        layer_paths_time[i] = add_links(g,layer_paths[i]);
-        cout<<"Time::::"<<layer_paths_time[i]<<endl;
-    }
+
+    // for(int i=0;i<layer_paths.size();i++){
+    //     layer_paths_time[i] = add_links(g,layer_paths[i]);
+    //     cout<<"Time::::"<<layer_paths_time[i]<<endl;
+    // }
     
-    for(int i=0;i<layer_dep.size();i++){
-        for(int j=0;j<layer_dep[i].size();j++){
-            cout<<layer_dep[i][j]<<"->";
-        }
-        cout<<endl;
-    }
+    // for(int i=0;i<layer_dep.size();i++){
+    //     for(int j=0;j<layer_dep[i].size();j++){
+    //         cout<<layer_dep[i][j]<<"->";
+    //     }
+    //     cout<<endl;
+    // }
 
     //vector<vector<node>> temp_g = g;
-    cout<<"Here11111"<<endl;
     int p;
     for(p=0;p<i.paths.size();p++){
         i.dep[p].pop_back();
@@ -960,26 +967,21 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
             break;
         }
     }
-    cout<<"Here222222"<<endl;
     if(p == i.paths.size()){
         //somehow drop the request
         return false;
     }
     double tt = add_links(g,i.paths[p]);
     result.mean_PD += abs(tt - diff);
-    cout<<"TTT:::::::"<<tt<<endl;
     if(tt > diff){
         if(tt - diff > max_tt)
             max_tt = tt - diff;
     }
     update_BW(g,i.paths[p],request.t_arrival_rate);
-    cout<<"Here12121"<<endl;
     update_resource(n_resource,funcs,i.dep[p],request.t_arrival_rate);
-    cout<<"Here333333"<<endl;
     for(int k=0;k<i.dep[p].size();k++){
         deployed_inst[funcs[k]] = i.dep[p][k];
         //cout<<funcs[k]<<":::::::::"<<i.dep[p][k]<<endl;
     }
-    cout<<"Here4444"<<endl;
     return true;
 }
