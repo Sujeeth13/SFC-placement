@@ -10,7 +10,7 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
     for(int i=0;i<SFC.size();i++){ //for each Ci
         if(SFC[i].size() == 1){
             temp.push_back(SFC[i]);
-            continue;;
+            continue;
         }
         double max_process = -1;
         int max_func;
@@ -23,6 +23,16 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
             }
         }
         cout<<"MAX FUNC:::::"<<max_func<<endl;
+        for(int l=0;l<SFC.size();l++){
+            for(int j=0;j<SFC[l].size();j++){
+                for(int k=0;k<SFC[l][j].size();k++){
+                    cout<<"("<<SFC[l][j][k]<<")";
+                }
+                cout<<"-->";
+            }
+            cout<<endl;
+        }
+
         double cap = max_process;
         vector<vector<int>> new_Ci;
         double cap_curr=0;
@@ -31,13 +41,21 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
             for(int f=0;f<SFC[i][b].size();f++){
                 if(SFC[i][b][f] == max_func)
                     continue;
-                if(cap_curr + NFs[SFC[i][b][f]] < cap){
+                else if(cap_curr + NFs[SFC[i][b][f]] <= cap){
                     cap_curr += NFs[SFC[i][b][f]];
                     bin.push_back(SFC[i][b][f]);
                 }
                 else{
                     cap_curr = 0;
                     new_Ci.push_back(bin);
+                    if(bin.size() == 0){
+                        cout<<"2222222222222222222\n";
+                        map<int,double>::iterator it;
+                        for(it = NFs.begin();it!=NFs.end();it++){
+                            s<<it->first<<": "<<it->second<<endl;
+                        }
+                        exit(0);
+                    }
                     bin.clear();
                     cap_curr += NFs[SFC[i][b][f]];
                     bin.push_back(SFC[i][b][f]);
@@ -52,6 +70,22 @@ vector<vector<vector<int>>> bin(vector<vector<vector<int>>> SFC,map<int,double> 
     }
     return temp;
 }
+
+bool check(vector<vector<vector<vector<int>>>>& paths){
+    for(int i=0;i<paths.size();i++){
+        for(int j=0;j<paths[i].size();j++){
+            for(int k=0;k<paths[i][j].size();k++){
+                for(int l=0;l<paths[i][j][k].size();l++){
+                    if(paths[i][j][k][l] < 0 || paths[i][j][k][l] > 23)
+                        return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+//ofstream s("status.txt");
 
 bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,vector<vector<int>>& NF_to_node,map<int,double>& NFs,Request request,Result& result){
     
@@ -75,9 +109,9 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
 
     // g[dest].clear();
     
-    int K = 2; //the number of K shortest paths
+    int K = 4; //the number of K shortest paths
     vector<vector<vector<vector<int>>>> paths(g.size(),vector<vector<vector<int>>>(g.size()));
-    cout<<paths.size()<<paths[0].size()<<endl;
+    //cout<<paths.size()<<paths[0].size()<<endl;
     for(int i=0;i<g.size();i++){
         for(int j=0;j<g.size();j++){
             vector<vector<int>> k_paths;
@@ -91,12 +125,20 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
             else{
                 //cout<<"here\n";
                 k_paths = YenKSP(g,i,j,request,K);
+                if(k_paths.size() == 0)
+                    return false;
                 //cout<<"here1\n";
             }
             paths[i][j] = k_paths;
         }
     }
-    // cout<<paths.size()<<paths[0].size()<<endl;
+
+    if(!check(paths)){
+        cout<<"error:::::::::PD_paths"<<endl;
+        exit(0);
+    }
+
+    //cout<<paths.size()<<paths[0].size()<<endl;
     // paths[0][0]= k_paths;
     vector<vector<vector<double>>> time_of_paths = calc_time(g,paths);
     // cout<<"Time:"<<endl;
@@ -170,10 +212,16 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
             else{
                 //cout<<"here\n";
                 k_paths = YenKSP(temp_g,i,j,request,K);
+                if(k_paths.size() == 0)
+                    return false;
                 //cout<<"here1\n";
             }
             paths[i][j] = k_paths;
         }
+    }
+    if(!check(paths)){
+        cout<<"error:::::::::PD_paths2"<<endl;
+        exit(0);
     }
     time_of_paths = calc_time(temp_g,paths);
 
@@ -227,10 +275,16 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
                     else{
                         //cout<<"here\n";
                         k_paths = YenKSP(temp_g,i,j,request,K);
+                        if(k_paths.size() == 0)
+                            return false;
                         //cout<<"here1\n";
                     }
                     paths[i][j] = k_paths;
                 }
+            }
+            if(!check(paths)){
+                cout<<"error:::::::::PD_paths3"<<endl;
+                exit(0);
             }
             time_of_paths = calc_time(temp_g,paths);
 
@@ -265,6 +319,7 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
         if(i == SFC.size()-1){
             diff = dest_time - time[SFC[i-1][SFC[i-1].size()-1][0]];
             diff -= (SFC[i].size()-1)*pkt_merge;
+            cout<<"DIFFFFFFFF:::::::::"<<diff<<endl;
         }
         else{
             diff = time[SFC[i+1][SFC[i+1].size()-1][0]] - time[SFC[i-1][SFC[i-1].size()-1][0]];
@@ -273,8 +328,24 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
             cout<<time[SFC[i+1][SFC[i+1].size()-1][0]]<<"\n"<<time[SFC[i-1][SFC[i-1].size()-1][0]]<<"\n"<<NFs[SFC[i+1][SFC[i+1].size()-1][0]]<<"\n"<<(SFC[i].size()-1)*pkt_merge<<endl;
         }
         for(int b=0;b<SFC[i].size()-1;b++){ //checking all branches except critical branch since all function instances have been deployed in the critical branch
+            if(SFC[i][b].size() == 0){
+                map<int,double>::iterator it;
+                for(it = NFs.begin();it!=NFs.end();it++){
+                    s<<it->first<<": "<<it->second<<endl;
+                }
+                for(int l=0;l<SFC.size();l++){
+                    for(int j=0;j<SFC[l].size();j++){
+                        for(int k=0;k<SFC[l][j].size();k++){
+                            s<<"("<<SFC[l][j][k]<<")";
+                        }
+                        s<<"-->";
+                    }
+                    s<<endl;
+                }
+            }
             if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
                 if(i == 0){
+                    cout<<"Fnc1\n";
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                         if(!layer_graph_2(src,SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
@@ -282,10 +353,12 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
                 }
                 else{
                     if(i == SFC.size()-1){
+                        cout<<"CHECKER FOR DEPLOYED::::::"<<deployed_inst[SFC[i-1][0][0]]<<" "<<SFC[i][b].size()<<endl;
                         if(!layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
                     }
                     else{
+                        cout<<"Fnc2\n";
                         for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                             // cout<<"HHHHHHHHHHHHHHHHHHHHHHHH:"<<b_n<<endl;
                             if(!layer_graph_2(deployed_inst[SFC[i-1][0][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
@@ -297,10 +370,12 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
             }
             else{
                 if(i == SFC.size()-1){
+                    cout<<"Fnc4\n";
                     if(!layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                         return false;
                 }
                 else{
+                    cout<<"Fnc5\n";
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                         if(!layer_graph_2(deployed_inst[SFC[i][b][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
@@ -350,7 +425,7 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
 
     // g[dest].clear();
     
-    int K = 2; //the number of K shortest paths
+    int K = 4; //the number of K shortest paths
     vector<vector<vector<vector<int>>>> paths(g.size(),vector<vector<vector<int>>>(g.size()));
     cout<<paths.size()<<paths[0].size()<<endl;
     for(int i=0;i<g.size();i++){
@@ -366,10 +441,16 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             else{
                 //cout<<"here\n";
                 k_paths = YenKSP(g,i,j,request,K);
+                if(k_paths.size() == 0)
+                    return false;
                 //cout<<"here1\n";
             }
             paths[i][j] = k_paths;
         }
+    }
+    if(!check(paths)){
+        cout<<"error:::::::::paths"<<endl;
+        exit(0);
     }
     // cout<<paths.size()<<paths[0].size()<<endl;
     // paths[0][0]= k_paths;
@@ -379,8 +460,6 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     //     cout<<time_of_paths[0][0][i]<<" ";
     // }
     // cout<<endl;
-
-
 
     for(int i=0;i<SFC.size();i++){
         for(int j=0;j<SFC[i].size();j++){
@@ -445,10 +524,16 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             else{
                 //cout<<"here\n";
                 k_paths = YenKSP(temp_g,i,j,request,K);
+                if(k_paths.size() == 0)
+                    return false;
                 //cout<<"here1\n";
             }
             paths[i][j] = k_paths;
         }
+    }
+    if(!check(paths)){
+        cout<<"error:::::::::paths2"<<endl;
+        exit(0);
     }
     time_of_paths = calc_time(temp_g,paths);
 
@@ -457,7 +542,6 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     // cout<<"F delay:::"<<NFs[critical_branch_node[0]]<<endl;
     // cout<<"Copy delay:::"<<(SFC[1].size()-1)*(pkt_copy)<<endl;
     // cout<<"initial::::"<<time[critical_branch_node[0]]<<endl;
-
     for(int i=0;i<SFC.size()-1;i++){
         int inst;
         int min_dist = INT_MAX;
@@ -507,6 +591,10 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
                     paths[i][j] = k_paths;
                 }
             }
+            if(!check(paths)){
+                cout<<"error:::::::::paths3"<<endl;
+                exit(0);
+            }
             time_of_paths = calc_time(temp_g,paths);
 
                 // cout<<"Min dis:::"<<min_dist<<endl;
@@ -548,8 +636,25 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             cout<<time[SFC[i+1][SFC[i+1].size()-1][0]]<<"\n"<<time[SFC[i-1][SFC[i-1].size()-1][0]]<<"\n"<<NFs[SFC[i+1][SFC[i+1].size()-1][0]]<<"\n"<<(SFC[i].size()-1)*pkt_merge<<endl;
         }
         for(int b=0;b<SFC[i].size()-1;b++){ //checking all branches except critical branch since all function instances have been deployed in the critical branch
+            if(SFC[i][b].size() == 0){
+                map<int,double>::iterator it;
+                for(it = NFs.begin();it!=NFs.end();it++){
+                    s<<it->first<<": "<<it->second<<endl;
+                }
+                for(int l=0;l<SFC.size();l++){
+                    for(int j=0;j<SFC[l].size();j++){
+                        for(int k=0;k<SFC[l][j].size();k++){
+                            s<<"("<<SFC[l][j][k]<<")";
+                        }
+                        s<<"-->";
+                    }
+                    s<<endl;
+                }
+            }
+
             if(deployed_inst.find(SFC[i][b][0]) == deployed_inst.end()){
                 if(i == 0){
+                    cout<<"Fnc1\n";
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                         if(!layer_graph(src,SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
@@ -557,10 +662,12 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
                 }
                 else{
                     if(i == SFC.size()-1){
+                        cout<<"CHECKER FOR DEPLOYED::::::"<<deployed_inst[SFC[i-1][0][0]]<<" "<<SFC[i][b].size()<<endl;
                         if(!layer_graph(deployed_inst[SFC[i-1][0][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
                     }
                     else{
+                        cout<<"Fnc2\n";
                         for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                             // cout<<"HHHHHHHHHHHHHHHHHHHHHHHH:"<<b_n<<endl;
                             if(!layer_graph(deployed_inst[SFC[i-1][0][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
@@ -572,10 +679,12 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
             }
             else{
                 if(i == SFC.size()-1){
+                    cout<<"Fnc4\n";
                     if(!layer_graph(deployed_inst[SFC[i][b][0]],SFC[i][b],dest,temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                         return false;
                 }
                 else{
+                    cout<<"Fnc5\n";
                     for(int b_n=0;b_n<SFC[i+1].size();b_n++){
                         if(!layer_graph(deployed_inst[SFC[i][b][0]],SFC[i][b],deployed_inst[SFC[i+1][b_n][0]],temp_g,time,deployed_inst,NF_to_node,NFs,temp_n_resource,paths,time_of_paths,request,result,diff,max_tt))
                             return false;
@@ -616,10 +725,11 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, num_of_funcs-1);
-        std::uniform_int_distribution<> dis_SFC(3, num_of_funcs);
+        std::uniform_int_distribution<> dis_SFC(3, 10);
 
         // randomly generating the SFC length (3 <= length <= num_of_funcs)
-        SFC_length = dis_SFC(gen);
+        //SFC_length = dis_SFC(gen);
+        SFC_length = 3;
         cout<<"SFC Length::::::"<<SFC_length<<endl;
 
         // randomly generating the PE size (2 <= PE_size <= SFC_length-1)
@@ -633,6 +743,12 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
         }
 
         vector<int> temp(numbers.begin(),numbers.end());
+        for(int i=0;i<temp.size();i++){
+            if(temp[i] < 0 || temp[i] > num_of_funcs-1){
+                s<<"SFC error:\n"<<temp[i]<<endl;
+                exit(0);
+            }
+        }
         std::uniform_int_distribution<> dis_part(1, temp.size()-PE_size);
         int low = dis_part(gen);
         for(int i=0;i<low;i++){
@@ -651,7 +767,7 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
 
         request.SFC = SFC;
         request.e2e = 1000;
-        request.t_arrival_rate = 1;
+        request.t_arrival_rate = 0.1;
         set<int> nodes;
         std::uniform_int_distribution<> dis_nodes(g_low, g_high);
         while (nodes.size() < 2) {
@@ -691,8 +807,11 @@ int main(){
     ofstream out("output_latency.txt");
     ofstream out1("output_PD.txt");
     ofstream out2("output_BW.txt");
+    ofstream out3("output_AR.txt");
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
-    for(int times=0;times<1;times++){
+    for(int times=0;times<2;times++){
         ifstream fin("graph_config.txt");
         ifstream rin("request.txt");
 
@@ -718,10 +837,13 @@ int main(){
         for(int i=0;i<funcs;i++){
             int f_id;
             double p_time;
-            rin>>f_id>>p_time;
+            std::uniform_int_distribution<> func_time(10,100);
+            //rin>>f_id>>p_time;
+            f_id = i;
+            p_time = func_time(gen);
             NFs[f_id] = p_time;
         }
-        requests = generate_SFC(n_of_requests,5,0,6);
+        requests = generate_SFC(n_of_requests,funcs,0,23);
         // vector<vector<vector<int>>> SFC{{{0}},{{1},{2},{3}},{{4}}};
         // vector<vector<vector<int>>> SFC1{{{0}},{{1},{2}},{{4}}};
         // SFC = bin(SFC,NFs);
@@ -737,19 +859,33 @@ int main(){
         //     cout<<endl;
         // }
         //SFC = {{{0}},{{1,2},{3}},{{4}}};
-        for(int i=0;i<n_of_f_instances;i++){
-            int f_id;
-            double time;
-            int node_id;
-            fin>>node_id>>f_id>>time;
-            // node_capacity temp(f_id,time);
-            n_resource[node_id].NF_left[f_id] = 100;
-            n_resource[node_id].deployed_NF[f_id] = time;
+        int VMs = 3;
+        double VM_cap = 100;
+        for(int i=0;i<N;i++){
+            std::uniform_int_distribution<> VM(1,VMs);
+            int node_vm = VM(gen);
+            std::set<int> numbers;
+            std::uniform_int_distribution<> node_funcs(0, funcs-1);
+            while (numbers.size() < node_vm) {
+                numbers.insert(node_funcs(gen));
+            }
+            vector<int> f_in_node(numbers.begin(),numbers.end());
+            for(int j=0;j<node_vm;j++){
+                int f_id = f_in_node[j];
+                double time;
+                int node_id = i;
+                //fin>>node_id>>f_id>>time;
+                node_id = i;
+                f_id = f_in_node[j];
+                // node_capacity temp(f_id,time);
+                n_resource[node_id].NF_left[f_id] = VM_cap;
+                n_resource[node_id].deployed_NF[f_id] = NFs[f_id];
 
-            n_resource_1[node_id].NF_left[f_id] = 100;
-            n_resource_1[node_id].deployed_NF[f_id] = time;
+                n_resource_1[node_id].NF_left[f_id] = VM_cap;
+                n_resource_1[node_id].deployed_NF[f_id] = NFs[f_id];
 
-            NF_to_node[f_id].push_back(node_id);
+                NF_to_node[f_id].push_back(node_id);
+            }
         }
 
         // cout<<"Node to funcs"<<endl;
@@ -774,8 +910,12 @@ int main(){
             int s,d;
             double l,b;
             fin>>s>>d>>l>>b;
+            std::uniform_int_distribution<> bw(10,100);
+            std::uniform_int_distribution<> link(1,20);
             int temp1 =d ;
             int temp2 = s;
+            b = bw(gen);
+            l = link(gen);
             node n1(temp1,l,b);
             node n2(temp2,l,b);
             g[s].push_back(n1);
@@ -784,11 +924,21 @@ int main(){
             g_1[d].push_back(n2);
         }
 
-        for(int i=0;i<g.size();i++){
-            for(int j=0;j<g[i].size();j++){
-                cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].link<<")"<<endl;
-            }
-        }
+        // for(int i=0;i<g.size();i++){
+        //     for(int j=0;j<g[i].size();j++){
+        //         cout<<i<<"->"<<g[i][j].id<<"("<<g[i][j].link<<")"<<"("<<g[i][j].available_bandwidth<<")"<<endl;
+        //     }
+        // }
+
+        // cout<<"Node to funcs"<<endl;
+        // for(int i=0;i<N;i++){
+        //     cout<<i<<":"<<endl;
+        //     map<int,double>::iterator it;
+        //     for(it=n_resource[i].deployed_NF.begin();it!=n_resource[i].deployed_NF.end();it++){
+        //         cout<<it->first<<":"<<it->second<<endl;
+        //     }
+        //     cout<<endl;
+        // }
 
         // Request request(0,6,SFC,270,12);
         // request.SFC = bin(request.SFC,NFs);
@@ -799,7 +949,7 @@ int main(){
         //do some sort on the requests
         Result result;
         bool res;
-        int AR = 0;
+        double AR = 0;
         for(int i=0;i<n_of_requests;i++){
             requests[i].SFC = bin(requests[i].SFC,NFs);
             res = SFC_embedding_PD(g,n_resource,NF_to_node,NFs,requests[i],result);
@@ -808,7 +958,7 @@ int main(){
         }
         Result result_1;
         bool res_1;
-        int AR_1 = 0;
+        double AR_1 = 0;
         for(int i=0;i<n_of_requests;i++){
             requests[i].SFC = bin(requests[i].SFC,NFs);
             res_1 = SFC_embedding(g_1,n_resource_1,NF_to_node,NFs,requests[i],result_1);
@@ -833,19 +983,14 @@ int main(){
         //     cout<<endl;
         // }
 
-        // cout<<"Latency::"<<result.mean_latency/AR<<endl;
-        // cout<<"PD::"<<result.mean_PD/AR<<endl;
-        cout<<"AR::"<<AR<<endl;
-        // cout<<"Latency_1::"<<result_1.mean_latency/AR<<endl;
-        // cout<<"PD_1::"<<result_1.mean_PD/AR<<endl;
-        cout<<"AR_1::"<<AR_1<<endl;
+        out3<<AR/n_of_requests<<","<<AR_1/n_of_requests<<endl;
 
         double bw = BW_used(g);
         double bw_1 = BW_used(g_1);
-        if(res)
-            out<<result.mean_latency/AR<<","<<result_1.mean_latency/AR<<endl;
-        if(res_1)
-            out1<<result.mean_PD/AR<<","<<result_1.mean_PD/AR<<endl;
+        //if(res)
+            out<<result.mean_latency/AR<<","<<result_1.mean_latency/AR_1<<endl;
+        //if(res_1)
+            out1<<result.mean_PD/AR<<","<<result_1.mean_PD/AR_1<<endl;
         out2<<bw<<","<<bw_1<<endl;
 
     }
