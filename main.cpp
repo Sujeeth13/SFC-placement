@@ -729,7 +729,7 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
 
         // randomly generating the SFC length (3 <= length <= num_of_funcs)
         //SFC_length = dis_SFC(gen);
-        SFC_length = 3;
+        SFC_length = 5;
         cout<<"SFC Length::::::"<<SFC_length<<endl;
 
         // randomly generating the PE size (2 <= PE_size <= SFC_length-1)
@@ -859,8 +859,8 @@ int main(){
         //     cout<<endl;
         // }
         //SFC = {{{0}},{{1,2},{3}},{{4}}};
-        int VMs = 3;
-        double VM_cap = 100;
+        int VMs = 4;
+        double VM_cap = 2;
         for(int i=0;i<N;i++){
             std::uniform_int_distribution<> VM(1,VMs);
             int node_vm = VM(gen);
