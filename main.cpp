@@ -725,11 +725,11 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, num_of_funcs-1);
-        std::uniform_int_distribution<> dis_SFC(3, 10);
+        std::uniform_int_distribution<> dis_SFC(4, 8);
 
         // randomly generating the SFC length (3 <= length <= num_of_funcs)
         //SFC_length = dis_SFC(gen);
-        SFC_length = 5;
+        SFC_length = 4;
         cout<<"SFC Length::::::"<<SFC_length<<endl;
 
         // randomly generating the PE size (2 <= PE_size <= SFC_length-1)
@@ -811,7 +811,7 @@ int main(){
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    for(int times=0;times<2;times++){
+    for(int times=0;times<5;times++){
         ifstream fin("graph_config.txt");
         ifstream rin("request.txt");
 
@@ -837,7 +837,7 @@ int main(){
         for(int i=0;i<funcs;i++){
             int f_id;
             double p_time;
-            std::uniform_int_distribution<> func_time(10,100);
+            std::uniform_int_distribution<> func_time(1,20);
             //rin>>f_id>>p_time;
             f_id = i;
             p_time = func_time(gen);
@@ -860,7 +860,7 @@ int main(){
         // }
         //SFC = {{{0}},{{1,2},{3}},{{4}}};
         int VMs = 4;
-        double VM_cap = 2;
+        double VM_cap = 0.5;
         for(int i=0;i<N;i++){
             std::uniform_int_distribution<> VM(1,VMs);
             int node_vm = VM(gen);
@@ -910,7 +910,7 @@ int main(){
             int s,d;
             double l,b;
             fin>>s>>d>>l>>b;
-            std::uniform_int_distribution<> bw(10,100);
+            std::uniform_int_distribution<> bw(10,20);
             std::uniform_int_distribution<> link(1,20);
             int temp1 =d ;
             int temp2 = s;
