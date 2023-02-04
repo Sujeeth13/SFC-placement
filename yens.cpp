@@ -1067,7 +1067,7 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
         return false;
     }
     double tt = add_links(g,i.paths[p]);
-    result.mean_PD += abs(tt - diff);
+    result.mean_PD += request.t_arrival_rate*(tt - diff);
     // cout<<"TTT:::::::"<<tt<<endl;
     if(tt > diff){
         if(tt - diff > max_tt)
@@ -1246,7 +1246,7 @@ vector<vector<vector<double>>>& time_of_paths,Request request,Result& result,dou
         return false;
     }
     double tt = add_links(g,i.paths[p]);
-    result.mean_PD += abs(tt - diff);
+    result.mean_PD += request.t_arrival_rate*(tt - diff);
     // cout<<"TTT:::::::"<<tt<<endl;
     if(tt > diff){
         if(tt - diff > max_tt)

@@ -837,10 +837,11 @@ vector<Request> generate_SFC(int n,int num_of_funcs,int g_low,int g_high){
             SFC.push_back(t2);
         }
 
-        std::uniform_int_distribution<> dis_e2e(199,200);
+        std::uniform_real_distribution<> dis_e2e(150,200);
         request.SFC = SFC;
         request.e2e = dis_e2e(gen);
-        request.t_arrival_rate = 1;
+        std::uniform_real_distribution<> dis_arrival(1,1.5);
+        request.t_arrival_rate = dis_arrival(gen);
         set<int> nodes;
         std::uniform_int_distribution<> dis_nodes(g_low, g_high);
         while (nodes.size() < 2) {
@@ -880,6 +881,13 @@ double BW_used(vector<vector<node>>& g){
     return bw;
 }
 
+class comparator{
+    public:
+    bool operator () (Request& a, Request& b){
+        return a.t_arrival_rate < b.t_arrival_rate;
+    }
+};
+
 int main(){
     ofstream out("output_latency.txt");
     ofstream out1("output_PD.txt");
@@ -889,7 +897,7 @@ int main(){
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    int runs = 5;
+    int runs = 10;
     int n_of_nodes = 24;
 
     Result f_result(n_of_nodes);
@@ -940,6 +948,11 @@ int main(){
             NFs[f_id] = p_time;
         }
         requests_pd = generate_SFC(n_of_requests,funcs,0,23);
+        sort(requests_pd.begin(),requests_pd.end(),comparator());
+        for(int i=0;i<requests_pd.size();i++){
+            cout<<i<<":"<<requests_pd[i].t_arrival_rate<<endl;
+        }
+        exit(0);
         requests_1 = requests_pd;
         requests_2 = requests_pd;
 
