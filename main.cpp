@@ -1139,7 +1139,7 @@ int main(){
         f_result_1.mean_latency += result_1.mean_latency/AR_1;
         f_result_2.mean_latency += result_2.mean_latency/AR_2;
         //if(res_1)
-            out1<<result.mean_PD/AR","<<result_1.mean_PD/AR_1<<","<<result_2.mean_PD/AR_2<<endl;
+            out1<<result.mean_PD/AR<<","<<result_1.mean_PD/AR_1<<","<<result_2.mean_PD/AR_2<<endl;
         f_result.mean_PD += result.mean_PD/AR;
         f_result_1.mean_PD += result_1.mean_PD/AR_1;
         f_result_2.mean_PD += result_2.mean_PD/AR_2;
