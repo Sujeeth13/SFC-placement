@@ -949,10 +949,6 @@ int main(){
         }
         requests_pd = generate_SFC(n_of_requests,funcs,0,23);
         sort(requests_pd.begin(),requests_pd.end(),comparator());
-        for(int i=0;i<requests_pd.size();i++){
-            cout<<i<<":"<<requests_pd[i].t_arrival_rate<<endl;
-        }
-        exit(0);
         requests_1 = requests_pd;
         requests_2 = requests_pd;
 
