@@ -151,7 +151,7 @@ bool SFC_embedding_PD(vector<vector<node>>& g,vector<node_capacity>& n_resource,
     map<int,int> deployed_inst;
     map<int,double> time; //map that contains the reach time to a NF in the chain
     double dest_time;
-    double pkt_copy=16,pkt_merge=16;
+    double pkt_copy=2,pkt_merge=2;
     //initializing reach time to that NF in the chain to 0
     vector<vector<vector<int>>> SFC = request.SFC;
     int src = request.src;
@@ -476,7 +476,7 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
     map<int,int> deployed_inst;
     map<int,double> time; //map that contains the reach time to a NF in the chain
     double dest_time;
-    double pkt_copy=16,pkt_merge=16;
+    double pkt_copy=2,pkt_merge=2;
     //initializing reach time to that NF in the chain to 0
     vector<vector<vector<int>>> SFC = request.SFC;
     int src = request.src;
@@ -493,7 +493,7 @@ bool SFC_embedding(vector<vector<node>>& g,vector<node_capacity>& n_resource,vec
 
     // g[dest].clear();
     
-    int K = 4; //the number of K shortest paths
+    int K = 3; //the number of K shortest paths
     vector<vector<vector<vector<int>>>> paths(g.size(),vector<vector<vector<int>>>(g.size()));
     cout<<paths.size()<<paths[0].size()<<endl;
     for(int i=0;i<g.size();i++){
