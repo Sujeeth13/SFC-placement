@@ -1133,6 +1133,7 @@ int main(){
         f_bw_1 += bw_1;
         double bw_2 = BW_used(g_2);
         f_bw_2 += bw_2;
+        //here
         //if(res)
             out<<result.mean_latency/AR<<","<<result_1.mean_latency/AR_1<<","<<result_2.mean_latency/AR_2<<endl;
         f_result.mean_latency += result.mean_latency/AR;
