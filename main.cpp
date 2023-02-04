@@ -1084,24 +1084,24 @@ int main(){
             if(res)
                 AR++;
         }
-        // Result result_1(N);
-        // bool res_1;
-        // double AR_1 = 0;
-        // for(int i=0;i<n_of_requests;i++){
-        //     requests_1[i].SFC = bin(requests_1[i].SFC,NFs);
-        //     res_1 = SFC_embedding(g_1,n_resource_1,NF_to_node,NFs,requests_1[i],result_1);
-        //     if(res_1)
-        //         AR_1++;
-        // }
-        // Result result_2(N);
-        // bool res_2;
-        // double AR_2 = 0;
-        // for(int i=0;i<n_of_requests;i++){
-        //     requests_2[i].SFC = bin_FP(requests_2[i].SFC,NFs);
-        //     res_2 = SFC_embedding(g_2,n_resource_2,NF_to_node,NFs,requests_2[i],result_2);
-        //     if(res_2)
-        //         AR_2++;
-        // }
+        Result result_1(N);
+        bool res_1;
+        double AR_1 = 0;
+        for(int i=0;i<n_of_requests;i++){
+            requests_1[i].SFC = bin(requests_1[i].SFC,NFs);
+            res_1 = SFC_embedding(g_1,n_resource_1,NF_to_node,NFs,requests_1[i],result_1);
+            if(res_1)
+                AR_1++;
+        }
+        Result result_2(N);
+        bool res_2;
+        double AR_2 = 0;
+        for(int i=0;i<n_of_requests;i++){
+            requests_2[i].SFC = bin_FP(requests_2[i].SFC,NFs);
+            res_2 = SFC_embedding(g_2,n_resource_2,NF_to_node,NFs,requests_2[i],result_2);
+            if(res_2)
+                AR_2++;
+        }
         // SFC_embedding_PD(g,n_resource,NF_to_node,NFs,request,result);
         
         // for(int i=0;i<g.size();i++){
@@ -1120,47 +1120,47 @@ int main(){
         //     cout<<endl;
         // }
 
-        out3<<AR/n_of_requests<<endl;//","<<AR_1/n_of_requests<<","<<AR_2/n_of_requests<<endl;
+        out3<<AR/n_of_requests<<","<<AR_1/n_of_requests<<","<<AR_2/n_of_requests<<endl;
 
         f_AR += AR/n_of_requests;
-        // f_AR_1 += AR_1/n_of_requests;
-        // f_AR_2 += AR_2/n_of_requests;
+        f_AR_1 += AR_1/n_of_requests;
+        f_AR_2 += AR_2/n_of_requests;
 
 
         double bw = BW_used(g);
         f_bw += bw;
-        // double bw_1 = BW_used(g_1);
-        // f_bw_1 += bw_1;
-        // double bw_2 = BW_used(g_2);
-        // f_bw_2 += bw_2;
+        double bw_1 = BW_used(g_1);
+        f_bw_1 += bw_1;
+        double bw_2 = BW_used(g_2);
+        f_bw_2 += bw_2;
         //if(res)
-            out<<result.mean_latency/AR<<endl;//","<<result_1.mean_latency/AR_1<<","<<result_2.mean_latency/AR_2<<endl;
+            out<<result.mean_latency/AR<<","<<result_1.mean_latency/AR_1<<","<<result_2.mean_latency/AR_2<<endl;
         f_result.mean_latency += result.mean_latency/AR;
-        // f_result_1.mean_latency += result_1.mean_latency/AR_1;
-        // f_result_2.mean_latency += result_2.mean_latency/AR_2;
+        f_result_1.mean_latency += result_1.mean_latency/AR_1;
+        f_result_2.mean_latency += result_2.mean_latency/AR_2;
         //if(res_1)
-            out1<<result.mean_PD/AR<<endl;//","<<result_1.mean_PD/AR_1<<","<<result_2.mean_PD/AR_2<<endl;
+            out1<<result.mean_PD/AR","<<result_1.mean_PD/AR_1<<","<<result_2.mean_PD/AR_2<<endl;
         f_result.mean_PD += result.mean_PD/AR;
-        // f_result_1.mean_PD += result_1.mean_PD/AR_1;
-        // f_result_2.mean_PD += result_2.mean_PD/AR_2;
+        f_result_1.mean_PD += result_1.mean_PD/AR_1;
+        f_result_2.mean_PD += result_2.mean_PD/AR_2;
 
-        out2<<bw<<endl;//","<<bw_1<<","<<bw_2<<endl;
+        out2<<bw<<","<<bw_1<<","<<bw_2<<endl;
 
         for(int i=0;i<result.nodes_util.size();i++){
-            out4<<i<<":"<<result.nodes_util[i]/AR<<endl;//","<<result_1.nodes_util[i]/AR_1<<","<<result_2.nodes_util[i]/AR_2<<endl;
+            out4<<i<<":"<<result.nodes_util[i]/AR<<","<<result_1.nodes_util[i]/AR_1<<","<<result_2.nodes_util[i]/AR_2<<endl;
             f_result.nodes_util[i] += result.nodes_util[i]/AR;
-            // f_result_1.nodes_util[i] += result_1.nodes_util[i]/AR_1;
-            // f_result_2.nodes_util[i] += result_2.nodes_util[i]/AR_2;
+            f_result_1.nodes_util[i] += result_1.nodes_util[i]/AR_1;
+            f_result_2.nodes_util[i] += result_2.nodes_util[i]/AR_2;
 
         }
     }
-    cout<<"Final mean latency:"<<f_result.mean_latency/runs<<endl;//","<<f_result_1.mean_latency/runs<<","<<f_result_2.mean_latency/runs<<endl;
-    cout<<"Final mean PD:"<<f_result.mean_PD/runs<<endl;//","<<f_result_1.mean_PD/runs<<","<<f_result_2.mean_PD/runs<<endl;
-    cout<<"Final mean bw:"<<f_bw/runs<<endl;//","<<f_bw_1/runs<<","<<f_bw_2/runs<<endl;
-    cout<<"Final mean AR:"<<f_AR/runs<<endl;//<<","<<f_AR_1/runs<<","<<f_AR_2/runs<<endl;
+    cout<<"Final mean latency:"<<f_result.mean_latency/runs<<","<<f_result_1.mean_latency/runs<<","<<f_result_2.mean_latency/runs<<endl;
+    cout<<"Final mean PD:"<<f_result.mean_PD/runs<<","<<f_result_1.mean_PD/runs<<","<<f_result_2.mean_PD/runs<<endl;
+    cout<<"Final mean bw:"<<f_bw/runs<<","<<f_bw_1/runs<<","<<f_bw_2/runs<<endl;
+    cout<<"Final mean AR:"<<f_AR/runs<<","<<f_AR_1/runs<<","<<f_AR_2/runs<<endl;
     cout<<"Node Utilization:"<<endl;
     for(int i=0;i<n_of_nodes;i++){
-        cout<<f_result.nodes_util[i]<<endl;//","<<f_result_1.nodes_util[i]<<","<<f_result_2.nodes_util[i]<<endl;
+        cout<<f_result.nodes_util[i]<<","<<f_result_1.nodes_util[i]<<","<<f_result_2.nodes_util[i]<<endl;
     }
     return 0;
 }
