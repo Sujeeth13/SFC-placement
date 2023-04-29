@@ -29,11 +29,11 @@ int main() {
     fin >> n_of_requests;
 
     //vector<vector<int>> SFC{ {10}, {0}, {1},{4},{11} };
-    //vector<vector<int>> SFC{ {10}, {0}, {1,2},{4},{11} };
-    vector<vector<int>> SFC{ {10}, {1,2 }, { 11 } };
+    vector<vector<int>> SFC{ {10}, {0}, {1,2},{4},{11} };
+    //vector<vector<int>> SFC{ {10}, {1,2 }, { 11 } };
     int src = 0;
     int dest = 6;
-    int a = 1;
+    int a = 2;
     vector<double> t_f(funcs + 2+(SFC[a].size()*(SFC[a].size() - 1)), 0);
     vector<vector<int>> g(N,vector<int>(N,0));
     vector<vector<double>> bw(N, vector<double>(N, INF)); //make it 0 when there is no edge
@@ -54,7 +54,14 @@ int main() {
         bw[s][d] = b;
         bw[d][s] = b;   //update both the edges bw simultaneously
     }
-
+    //making bw between non existant edges 0
+    for (int u = 0;u < N;u++) {
+        for (int v = 0;v < N;v++) {
+            if (g[u][v] == 0) {
+                bw[u][v] = 0;
+            }
+        }
+    }
     //getting func time value
     for (int i = 0;i < funcs;i++) {
         int f_id;
@@ -123,14 +130,16 @@ int main() {
     //dep[2][11] = 1;
 
     //deployed instance capacity
-    //cap[1][2] = 10;
-    //cap[1][4] = 10;
-    //cap[2][0] = 10;
-    //cap[2][3] = 10;
-    //cap[3][0] = 10;
-    //cap[4][1] = 10;
-    //cap[4][2] = 10;
-    //cap[5][1] = 10;
+    cap[0][10] = 1;
+    cap[6][11] = 1;
+    cap[1][2] = 10;
+    cap[1][4] = 10;
+    cap[2][0] = 10;
+    cap[2][3] = 10;
+    cap[3][0] = 10;
+    cap[4][1] = 10;
+    cap[4][2] = 10;
+    cap[5][1] = 10;
 
     std::cout << "SFC before: \n";
     for (int i = 0;i < SFC.size();i++) {
@@ -218,75 +227,63 @@ int main() {
             }
             EDGE[i] = t1;
         }
-        #pragma endregion
+#pragma endregion
 
-        IloNumVarArray theta(env, 1,0,IloInfinity, ILOFLOAT);
-        double param = 0.99;
-        #pragma region Objective function
-            IloExpr node_expr(env);
-            IloExpr edge_expr(env);
-            for (int b = 0;b < B[a];b++) {
-                for (int s = 0;s < B[a];s++) {
-                    for (int f = 0;f < B[a];f++) {   //funcs is enough
-                        for (int u = 0;u < N;u++) {
-                            node_expr += (t_f[SFC[a][f]] * NODE[a][b][s][SFC[a][f]][u]);
-                        }
-                    }
-                }
-                for (int s = 0;s < B[a]-1;s++) {
-                    //for (int s1 = s+1;s1 < B[a];s1++) {
-                    //    for (int u = 0;u < N;u++) {
-                    //        for (int v = 0;v < N;v++) {
-                    //            edge_expr += (t_uv[u][v] * EDGE[a][a][b][b][s][s1][u][v]);
-                    //        }
-                    //    }
-                    //}
+        IloNumVarArray theta(env, 1, 0, IloInfinity, ILOFLOAT);
+        double param1 = 0.8;
+        double param2 = 0.1;
+        double param3 = 0.1;
+
+#pragma region Objective function
+        IloExpr node_expr(env);
+        IloExpr edge_expr(env);
+        for (int b = 0;b < B[a];b++) {
+            for (int s = 0;s < B[a];s++) {
+                for (int f = 0;f < B[a];f++) {   //funcs is enough
                     for (int u = 0;u < N;u++) {
-                        for (int v = 0;v < N;v++) {
-                            if (g[u][v]) {
-                                edge_expr += (t_uv[u][v] * EDGE[a][a][b][b][s][s + 1][u][v]);
-                            }
-                        }
+                        node_expr += (t_f[SFC[a][f]] * NODE[a][b][s][SFC[a][f]][u]);
                     }
-                    //for (int u = 0;u < N;u++) {
-                    //    for (int v = 0;v < N;v++) {
-                    //        edge_expr += (t_uv[u][v] * (EDGE[a - 1][a][0][b][0][s][u][v] + EDGE[a][a + 1][b][0][s][0][u][v]));
-                    //    }
-                    //}
                 }
+            }
+            for (int s = 0;s < B[a] - 1;s++) {
+                //for (int s1 = s+1;s1 < B[a];s1++) {
+                //    for (int u = 0;u < N;u++) {
+                //        for (int v = 0;v < N;v++) {
+                //            edge_expr += (t_uv[u][v] * EDGE[a][a][b][b][s][s1][u][v]);
+                //        }
+                //    }
+                //}
                 for (int u = 0;u < N;u++) {
                     for (int v = 0;v < N;v++) {
                         if (g[u][v]) {
-                            edge_expr += (t_uv[u][v] * (EDGE[a - 1][a][0][b][0][0][u][v] + EDGE[a][a + 1][b][0][B[a] - 1][0][u][v]));
+                            edge_expr += (t_uv[u][v] * EDGE[a][a][b][b][s][s + 1][u][v]);
                         }
                     }
                 }
+                //for (int u = 0;u < N;u++) {
+                //    for (int v = 0;v < N;v++) {
+                //        edge_expr += (t_uv[u][v] * (EDGE[a - 1][a][0][b][0][s][u][v] + EDGE[a][a + 1][b][0][s][0][u][v]));
+                //    }
+                //}
             }
+            for (int u = 0;u < N;u++) {
+                for (int v = 0;v < N;v++) {
+                    if (g[u][v]) {
+                        edge_expr += (t_uv[u][v] * (EDGE[a - 1][a][0][b][0][0][u][v] + EDGE[a][a + 1][b][0][B[a] - 1][0][u][v]));
+                    }
+                }
+            }
+        }
 
-            IloExpr e2e_expr(env);
-            e2e_expr += (B[a] - 1) * (copy_time + merge_time);
-            for (int i = 0;i < a;i++) {
-                for (int f = 0;f < B[i];f++) {
-                    for (int u = 0;u < N;u++) {
-                        e2e_expr += NODE[i][0][0][SFC[i][f]][u] * t_f[SFC[i][f]];
-                    }
-                }
-                if (i < a - 1) {
-                    for (int u = 0;u < N;u++) {
-                        for (int v = 0;v < N;v++) {
-                            if (g[u][v]) {
-                                e2e_expr += EDGE[i][i + 1][0][0][0][0][u][v] * t_uv[u][v];
-                            }
-                        }
-                    }
+        IloExpr e2e_expr(env);
+        e2e_expr += (B[a] - 1) * (copy_time + merge_time);
+        for (int i = 0;i < a;i++) {
+            for (int f = 0;f < B[i];f++) {
+                for (int u = 0;u < N;u++) {
+                    e2e_expr += NODE[i][0][0][SFC[i][f]][u] * t_f[SFC[i][f]];
                 }
             }
-            for (int i = a + 1;i < SFC.size() - 1;i++) {
-                for (int f = 0;f < B[i];f++) {
-                    for (int u = 0;u < N;u++) {
-                        e2e_expr += NODE[i][0][0][SFC[i][f]][u] * t_f[SFC[i][f]];
-                    }
-                }
+            if (i < a - 1) {
                 for (int u = 0;u < N;u++) {
                     for (int v = 0;v < N;v++) {
                         if (g[u][v]) {
@@ -295,10 +292,49 @@ int main() {
                     }
                 }
             }
-            e2e_expr += theta[0];
+        }
+        for (int i = a + 1;i < SFC.size() - 1;i++) {
+            for (int f = 0;f < B[i];f++) {
+                for (int u = 0;u < N;u++) {
+                    e2e_expr += NODE[i][0][0][SFC[i][f]][u] * t_f[SFC[i][f]];
+                }
+            }
+            for (int u = 0;u < N;u++) {
+                for (int v = 0;v < N;v++) {
+                    if (g[u][v]) {
+                        e2e_expr += EDGE[i][i + 1][0][0][0][0][u][v] * t_uv[u][v];
+                    }
+                }
+            }
+        }
+        e2e_expr += theta[0];
+
+        IloExpr bw_cons(env);
+        for (int i = 0;i < SFC.size() - 1;i++) {
+            for (int b = 0;b < B[i];b++) {
+                for (int b1 = 0;b1 < B[i + 1];b1++) {
+                    for (int u = 0;u < N;u++) {
+                        for (int v = 0;v < N;v++) {
+                            bw_cons += EDGE[i][i + 1][b][b1][B[i] - 1][0][u][v] * arrival_SFC;
+                        }
+                    }
+                }
+            }
+            if(i == a){
+                for (int b = 0;b < B[i];b++) {
+                    for (int s = 0;s < B[i] - 1;s++) {
+                        for (int u = 0;u < N;u++) {
+                            for (int v = 0;v < N;v++) {
+                                bw_cons += EDGE[a][a][b][b][s][s + 1][u][v] * arrival_SFC;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
             IloExpr obj(env);
-            obj += param*((B[a] * theta[0]) - (node_expr + edge_expr)) + (1-param)*e2e_expr;
+            obj += param1*((B[a] * theta[0]) - (node_expr + edge_expr)) + (param2)*e2e_expr + (param2)*bw_cons;
             //model.add(obj >= 0);
             model.add(IloMinimize(env,obj));
 
@@ -420,30 +456,7 @@ int main() {
                     }
                 }
             }
-            ////flow conservation within parallel branch
-            //for (int b = 0;b < B[a];b++) {
-            //    for (int s = 0;s < B[a] - 1;s++) {
-            //        for (int f = 0;f < SFC[a].size();f++) {
-            //            for (int f1 = 0;f1 < SFC[a].size();f1++) {
-            //                for (int u = 0;u < N;u++) {
-            //                    IloExpr c(env);
-            //                    IloExpr c1(env);
-            //                    for (int v = 0;v < N;v++) {
-            //                        if (g[u][v] == 1) {
-            //                            c += EDGE[a][a][b][b][s][s + 1][v][u];
-            //                        }
-            //                    }
-            //                    for (int w = 0;w < N;w++) {
-            //                        if (g[u][w] == 1) {
-            //                            c1 += EDGE[a][a][b][b][s][s + 1][u][w];
-            //                        }
-            //                    }
-            //                    model.add((c - c1) /* - (NODE[a][b][s + 1][SFC[a][f1]][u] - NODE[a][b][s][SFC[a][f]][u]) */ == 0);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+            //flow conservation within parallel branch
             for (int b = 0;b < B[a];b++) {
                 for (int s = 0;s < B[a] - 1;s++) {
                     for (int u = 0;u < N;u++) {
@@ -471,61 +484,7 @@ int main() {
                         
                 }
             }
-            //for (int b = 0;b < B[a];b++) {
-            //    for (int s = 0;s < B[a] - 1;s++) {
-            //        for (int f = 0;f < SFC[a].size();f++) {
-            //            for (int u = 0;u < N;u++) {
-            //                IloExpr c(env);
-            //                IloExpr c1(env);
-            //                for (int w = 0;w < N;w++) {
-            //                    if(g[u][w])
-            //                        c1 += EDGE[a][a][b][b][s][s + 1][u][w];
-            //                }
-            //                model.add(c1 >= NODE[a][b][s][SFC[a][f]][u]);
-            //                for (int v = 0;v < N;v++) {
-            //                    if (g[u][v])
-            //                        c += EDGE[a][a][b][b][s][s + 1][v][u];
-            //                }
-            //                model.add(c >= NODE[a][b][s + 1][SFC[a][f]][u]);
-            //            }
-            //        }
-            //    }
-            //}
             //flow conservation between PEs
-            //for (int i = 0;i < SFC.size()-1;i++) {
-            //    for (int b = 0;b < B[i];b++) {
-            //        for (int b1 = 0;b1 < B[i + 1];b1++) {
-            //            for (int f = 0;f < SFC[i].size();f++) {
-            //                for (int f1 = 0;f1 < SFC[i+1].size();f1++) {
-            //                    for (int u = 0;u < N;u++) {
-            //                        IloExpr c(env);
-            //                        IloExpr c1(env);
-            //                        for (int v = 0;v < N;v++) {
-            //                            if (g[u][v] == 1) {
-            //                                c += EDGE[i][i + 1][b][b1][B[i] - 1][0][v][u];
-            //                            }
-            //                        }
-            //                        for (int w = 0;w < N;w++) {
-            //                            if (g[u][w] == 1) {
-            //                                c1 += EDGE[i][i + 1][b][b1][B[i] - 1][0][u][w];
-            //                            }
-            //                        }
-            //                        if (i == 0 && u == src) {
-            //                            //model.add(c == 0);
-            //                            model.add(c1 == 1);
-            //                        }
-            //                        else if (i == SFC.size() - 1 and u == dest) {
-            //                            model.add(c == 1);
-            //                            //model.add(c1 == 0);
-            //                        }
-            //                        else
-            //                            model.add((c - c1) /* - (NODE[i + 1][b1][0][SFC[i + 1][f1]][u] - NODE[i][b][B[i] - 1][SFC[i][f]][u]) */ == 0);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             for (int i = 0;i < SFC.size() - 1;i++) {
                 for (int b = 0;b < B[i];b++) {
                     for (int b1 = 0;b1 < B[i + 1];b1++) {
@@ -568,137 +527,47 @@ int main() {
                     }
                 }
             }
-            //for (int b = 0;b < B[0];b++) {
-            //    for (int s = 0;s < B[0];s++) {
-            //        for (int f = 0; f < funcs + 2 + temp; f++) {
-            //            IloExpr f_expr(env);
-            //            for (int u = 0;u < N;u++) {
-            //                f_expr += NODE[0][b][s][f][u];
-            //                if (f == 10) {
-            //                    if (u == src) {
-            //                        model.add(NODE[0][b][s][f][u] == 1);
-            //                    }
-            //                    else {
-            //                        model.add(NODE[0][b][s][f][u] == 0);
-            //                    }
-            //                }
-            //            }
-            //            if (f != 10)
-            //                model.add(f_expr == 0);
-            //        }
-            //    }
-            //}
+            
+            //BW constraints
+            for(int u = 0;u < N;u++){
+                for (int v = 0;v < N;v++) {
+                    IloExpr bw_expr(env);
 
-            //for (int b = 0;b < B[SFC.size()-1];b++) {
-            //    for (int s = 0;s < B[SFC.size()-1];s++) {
-            //        for (int f = 0; f < funcs + 2 + temp; f++) {
-            //            IloExpr f_expr(env);
-            //            for (int u = 0;u < N;u++) {
-            //                f_expr += NODE[SFC.size()-1][b][s][f][u];
-            //                if (f == 11) {
-            //                    if (u == dest) {
-            //                        model.add(NODE[SFC.size()-1][b][s][f][u] == 1);
-            //                    }
-            //                    else {
-            //                        model.add(NODE[SFC.size()-1][b][s][f][u] == 0);
-            //                    }
-            //                }
-            //            }
-            //            if (f != 11)
-            //                model.add(f_expr == 0);
-            //        }
-            //    }
-            //}
-            //for (int b = 0;b < 1/*B[a]*/;b++) {
-            //    for (int i = 0;i < SFC.size()-1;i++) {
-            //        if (i == a - 1) {
-            //            for (int f = 0;f < SFC[i].size();f++) {
-            //                for (int f1 = 0;f1 < SFC[i + 1].size();f1++) {
-            //                    for (int u = 0;u < N;u++) {
-            //                        IloExpr c(env);
-            //                        IloExpr c1(env);
-            //                        for (int v = 0;v < N;v++) {
-            //                            if (g[u][v] == 1) {
-            //                                c += EDGE[i][i + 1][0][b][0][0][v][u];
-            //                            }
-            //                        }
-            //                        for (int w = 0;w < N;w++) {
-            //                            if (g[u][w] == 1) {
-            //                                c1 += EDGE[i][i + 1][0][b][0][0][u][w];
-            //                            }
-            //                        }
-            //                        model.add((c - c1) - (NODE[i + 1][b][0][SFC[i + 1][f1]][u] - NODE[i][0][0][SFC[i][f]][u]) == 0);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        else  if (i == a) {
-            //            for (int s = 0;s < B[a] - 1;s++) {
-            //                for (int f = 0;f < SFC[a].size();f++) {
-            //                    for (int f1 = 0;f1 < SFC[a].size();f1++) {
-            //                        for (int u = 0;u < N;u++) {
-            //                            IloExpr c(env);
-            //                            IloExpr c1(env);
-            //                            for (int v = 0;v < N;v++) {
-            //                                if (g[u][v] == 1) {
-            //                                    c += EDGE[a][a][b][b][s][s + 1][v][u];
-            //                                }
-            //                            }
-            //                            for (int w = 0;w < N;w++) {
-            //                                if (g[u][w] == 1) {
-            //                                    c1 += EDGE[a][a][b][b][s][s + 1][u][w];
-            //                                }
-            //                            }
-            //                            model.add((c - c1) - (NODE[a][b][s + 1][SFC[a][f1]][u] - NODE[a][b][s][SFC[a][f]][u]) == 0);
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            for (int f = 0;f < SFC[i].size();f++) {
-            //                for (int f1 = 0;f1 < SFC[i + 1].size();f1++) {
-            //                    for (int u = 0;u < N;u++) {
-            //                        IloExpr c(env);
-            //                        IloExpr c1(env);
-            //                        for (int v = 0;v < N;v++) {
-            //                            if (g[u][v] == 1) {
-            //                                c += EDGE[i][i + 1][b][0][B[i] - 1][0][v][u];
-            //                            }
-            //                        }
-            //                        for (int w = 0;w < N;w++) {
-            //                            if (g[u][w] == 1) {
-            //                                c1 += EDGE[i][i + 1][b][0][B[i] - 1][0][u][w];
-            //                            }
-            //                        }
-            //                        model.add((c - c1) - (NODE[i + 1][0][0][SFC[i + 1][f1]][u] - NODE[i][b][B[i] - 1][SFC[i][f]][u]) == 0);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        else {
-            //            for (int f = 0;f < SFC[i].size();f++) {
-            //                for (int f1 = 0;f1 < SFC[i + 1].size();f1++) {
-            //                    for (int u = 0;u < N;u++) {
-            //                        IloExpr c(env);
-            //                        IloExpr c1(env);
-            //                        for (int v = 0;v < N;v++) {
-            //                            if (g[u][v] == 1) {
-            //                                c += EDGE[i][i + 1][0][0][0][0][v][u];
-            //                            }
-            //                        }
-            //                        for (int w = 0;w < N;w++) {
-            //                            if (g[u][w] == 1) {
-            //                                c1 += EDGE[i][i + 1][0][0][0][0][u][w];
-            //                            }
-            //                        }
-            //                        model.add((c - c1) - (NODE[i + 1][0][0][SFC[i + 1][f1]][u] - NODE[i][0][0][SFC[i][f]][u]) == 0);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            ////BW constraints within branch
-            //
+                    //intra PE BW constraint
+                    for (int b = 0;b < B[a];b++) {
+                        for (int s = 0;s < B[a] - 1;s++) {
+                            bw_expr += (arrival_SFC*EDGE[a][a][b][b][s][s + 1][u][v]);
+                        }
+                    }
+
+                    //inter PE BW constraint
+                    for (int i = 0;i < SFC.size() - 1;i++) {
+                        for (int b = 0;b < B[i];b++) {
+                            for (int b1 = 0;b1 < B[i + 1];b1++) {
+                                bw_expr += (arrival_SFC * EDGE[i][i + 1][b][b1][B[i] - 1][0][u][v]);
+                            }
+                        }
+                    }
+
+                    model.add(bw_expr <= bw[u][v]);
+                }
+            }
+
+            //node resource constraint
+            for (int u = 0;u < N;u++) {
+                for (int f = 0;f < funcs + 2 + temp;f++) {
+                    IloExpr cap_expr(env);
+                    for (int i = 0;i < SFC.size();i++) {
+                        for (int b = 0;b < B[i];b++) {
+                            for (int s = 0;s < B[i];s++) {
+                                cap_expr += (arrival_SFC * NODE[i][b][s][f][u]);
+                            }
+                        }
+                    }
+                    model.add(cap_expr <= cap[u][f]);
+                }
+            }
+
             //ensuring function f on u is picked only if f is deployed on u
             for (int i = 0;i < SFC.size();i++) {
                 for (int b = 0;b < B[i];b++) {
@@ -733,14 +602,15 @@ int main() {
             }
 
             for (int i = 0;i < SFC.size();i++) {
-                for (int i1 = i+2;i1 < SFC.size();i1++) {
+                for (int i1 = 0;i1 < SFC.size();i1++) {
                     for (int b = 0;b < B[i];b++) {
                         for (int b1 = 0;b1 < B[i1];b1++) {
                             for (int s = 0;s < B[i];s++) {
                                 for (int s1 = 0;s1 < B[i1];s1++) {
                                     for (int u = 0;u < N;u++) {
                                         for (int v = 0;v < N;v++) {
-                                            model.add(EDGE[i][i1][b][b1][s][s1][u][v] == 0);
+                                            if(i1 != i && i1 != i+1)
+                                                model.add(EDGE[i][i1][b][b1][s][s1][u][v] == 0);
                                         }
                                     }
                                 }
@@ -749,23 +619,23 @@ int main() {
                     }
                 }
             }
-            for (int i = SFC.size()-1;i >= 0;i--) {
-                for (int i1 = i - 1;i1 >= 0;i1--) {
-                    for (int b = 0;b < B[i];b++) {
-                        for (int b1 = 0;b1 < B[i1];b1++) {
-                            for (int s = 0;s < B[i];s++) {
-                                for (int s1 = 0;s1 < B[i1];s1++) {
-                                    for (int u = 0;u < N;u++) {
-                                        for (int v = 0;v < N;v++) {
-                                            model.add(EDGE[i][i1][b][b1][s][s1][u][v] == 0);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            //for (int i = SFC.size()-1;i >= 0;i--) {
+            //    for (int i1 = i - 1;i1 >= 0;i1--) {
+            //        for (int b = 0;b < B[i];b++) {
+            //            for (int b1 = 0;b1 < B[i1];b1++) {
+            //                for (int s = 0;s < B[i];s++) {
+            //                    for (int s1 = 0;s1 < B[i1];s1++) {
+            //                        for (int u = 0;u < N;u++) {
+            //                            for (int v = 0;v < N;v++) {
+            //                                model.add(EDGE[i][i1][b][b1][s][s1][u][v] == 0);
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             for (int i = 0;i < SFC.size();i++) {
                 for (int b = 0;b < B[i];b++) {
                     for (int s = 0;s < B[i];s++) {
@@ -794,13 +664,30 @@ int main() {
                     }
                 }
             }
+            for (int i = 0;i < SFC.size() - 1;i++) {
+                for (int b = 0;b < B[i];b++) {
+                    for (int b1 = 0;b1 < B[i + 1];b1++) {
+                        for (int s = 0;s < B[i];s++) {
+                            for (int s1 = 0;s1 < B[i + 1];s1++) {
+                                for (int u = 0;u < N;u++) {
+                                    for (int v = 0;v < N;v++) {
+                                        if (s != B[i] - 1 && s1 != 0)
+                                            model.add(EDGE[i][i + 1][b][b1][s][s1][u][v] == 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             for (int i = 0;i < SFC.size();i++) {
                 for (int b = 0;b < B[i];b++) {
                     for (int s = 0;s < B[i];s++) {
-                        for (int s1 = s + 2;s1 < B[i];s1++) {
+                        for (int s1 = 0;s1 < B[i];s1++) {
                             for (int u = 0;u < N;u++) {
                                 for (int v = 0;v < N;v++) {
-                                    model.add(EDGE[i][i][b][b][s][s1][u][v] == 0);
+                                    if(s1 != s && s1 != s+1)
+                                        model.add(EDGE[i][i][b][b][s][s1][u][v] == 0);
                                 }
                             }
                         }
@@ -882,33 +769,6 @@ int main() {
             }
             std::cout << "Diff: " << e << endl;
 
-            //double e2e_val = 0;
-            //e2e_val += (B[a] - 1) * (copy_time + merge_time);
-            //for (int i = 0;i < a - 1;i++) {
-            //    for (int f = 0;f < B[i];f++) {
-            //        for (int u = 0;u < N;u++) {
-            //            e2e_val += cplex.getValue(NODE[i][0][0][SFC[i][f]][u]) * t_f[SFC[i][f]];
-            //        }
-            //    }
-            //    for (int u = 0;u < N;u++) {
-            //        for (int v = 0;v < N;v++) {
-            //            e2e_val += cplex.getValue(EDGE[i][i + 1][0][0][0][0][u][v]) * t_uv[u][v];
-            //        }
-            //    }
-            //}
-            //for (int i = a + 1;i < SFC.size() - 1;i++) {
-            //    for (int f = 0;f < B[i];f++) {
-            //        for (int u = 0;u < N;u++) {
-            //            e2e_val += cplex.getValue(NODE[i][0][0][SFC[i][f]][u]) * t_f[SFC[i][f]];
-            //        }
-            //    }
-            //    for (int u = 0;u < N;u++) {
-            //        for (int v = 0;v < N;v++) {
-            //            e2e_val += cplex.getValue(EDGE[i][i + 1][0][0][0][0][u][v]) * t_uv[u][v];
-            //        }
-            //    }
-            //}
-            //e2e_val += cplex.getValue(theta[0]);
             std::cout << "Final e2e latency::::::" << cplex.getValue(e2e_expr) << endl;
 
             for (int i = 0;i < SFC.size();i++) {
@@ -919,9 +779,13 @@ int main() {
                                 for (int s1 = 0;s1 < B[i1];s1++) {
                                     for (int u = 0;u < N;u++) {
                                         for (int v = 0;v < N;v++) {
-                                            if(g[u][v] == 1)
-                                            if (cplex.getValue(EDGE[i][i1][b][b1][s][s1][u][v])) {
-                                                std::cout << "(" << i << "," << i1 << "," << b << "," << b1 << "," << s << "," << s1 << ","<<u << ","<<v << ") " << cplex.getValue(EDGE[i][i1][b][b1][s][s1][u][v]) << endl;
+                                            try {
+                                                if (cplex.getValue(EDGE[i][i1][b][b1][s][s1][u][v])) {
+                                                    std::cout << "(" << i << "," << i1 << "," << b << "," << b1 << "," << s << "," << s1 << "," << u << "," << v << ") " << cplex.getValue(EDGE[i][i1][b][b1][s][s1][u][v]) << endl;
+                                                }
+                                            }
+                                            catch (IloException e) {
+                                                continue;
                                             }
                                         }
                                     }
