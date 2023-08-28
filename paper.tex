@@ -1,0 +1,1963 @@
+%% bare_jrnl.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% see http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% journal paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
+
+
+\documentclass[journal]{IEEEtran}
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[journal]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/pkg/ifpdf
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of the IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/pkg/cite
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation
+% can be obtained at: 
+% http://www.ctan.org/pkg/graphicx
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found at:
+% http://www.ctan.org/pkg/epslatex
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). The IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics.
+%
+% Note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/amsmath
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as the IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/pkg/algorithms
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/pkg/algorithmicx
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/array
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+% subfig.sty, written by Steven Douglas Cochran, is the modern replacement
+% for subfigure.sty, the latter of which is no longer maintained and is
+% incompatible with some LaTeX packages including fixltx2e. However,
+% subfig.sty requires and automatically loads Axel Sommerfeldt's caption.sty
+% which will override IEEEtran.cls' handling of captions and this will result
+% in non-IEEE style figure/table captions. To prevent this problem, be sure
+% and invoke subfig.sty's "caption=false" package option (available since
+% subfig.sty version 1.3, 2005/06/28) as this is will preserve IEEEtran.cls
+% handling of captions.
+% Note that the Computer Society format requires a larger sans serif font
+% than the serif footnote size font used in traditional IEEE formatting
+% and thus the need to invoke different subfig.sty package options depending
+% on whether compsoc mode has been enabled.
+%
+% The latest version and documentation of subfig.sty can be obtained at:
+% http://www.ctan.org/pkg/subfig
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure.
+% Be aware that LaTeX2e kernels dated 2015 and later have fixltx2e.sty's
+% corrections already built into the system in which case a warning will
+% be issued if an attempt is made to load fixltx2e.sty as it is no longer
+% needed.
+% The latest version and documentation can be found at:
+% http://www.ctan.org/pkg/fixltx2e
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/stfloats
+% Do not use the stfloats baselinefloat ability as the IEEE does not allow
+% \baselineskip to stretch. Authors submitting work to the IEEE should note
+% that the IEEE rarely uses double column equations and that authors should try
+% to avoid such use. Do not be tempted to use the cuted.sty or midfloat.sty
+% packages (also by Sigitas Tolusis) as the IEEE does not format its papers in
+% such ways.
+% Do not attempt to use stfloats with fixltx2e as they are incompatible.
+% Instead, use Morten Hogholm'a dblfloatfix which combines the features
+% of both fixltx2e and stfloats:
+%
+% \usepackage{dblfloatfix}
+% The latest version can be found at:
+% http://www.ctan.org/pkg/dblfloatfix
+
+
+
+
+%\ifCLASSOPTIONcaptionsoff
+%  \usepackage[nomarkers]{endfloat}
+% \let\MYoriglatexcaption\caption
+% \renewcommand{\caption}[2][\relax]{\MYoriglatexcaption[#2]{#2}}
+%\fi
+% endfloat.sty was written by James Darrell McCauley, Jeff Goldberg and 
+% Axel Sommerfeldt. This package may be useful when used in conjunction with 
+% IEEEtran.cls'  captionsoff option. Some IEEE journals/societies require that
+% submissions have lists of figures/tables at the end of the paper and that
+% figures/tables without any captions are placed on a page by themselves at
+% the end of the document. If needed, the draftcls IEEEtran class option or
+% \CLASSINPUTbaselinestretch interface can be used to increase the line
+% spacing as well. Be sure and use the nomarkers option of endfloat to
+% prevent endfloat from "marking" where the figures would have been placed
+% in the text. The two hack lines of code above are a slight modification of
+% that suggested by in the endfloat docs (section 8.4.1) to ensure that
+% the full captions always appear in the list of figures/tables - even if
+% the user used the short optional argument of \caption[]{}.
+% IEEE papers do not typically make use of \caption[]'s optional argument,
+% so this should not be an issue. A similar trick can be used to disable
+% captions of packages such as subfig.sty that lack options to turn off
+% the subcaptions:
+% For subfig.sty:
+% \let\MYorigsubfloat\subfloat
+% \renewcommand{\subfloat}[2][\relax]{\MYorigsubfloat[]{#2}}
+% However, the above trick will not work if both optional arguments of
+% the \subfloat command are used. Furthermore, there needs to be a
+% description of each subfigure *somewhere* and endfloat does not add
+% subfigure captions to its list of figures. Thus, the best approach is to
+% avoid the use of subfigure captions (many IEEE journals avoid them anyway)
+% and instead reference/explain all the subfigures within the main caption.
+% The latest version of endfloat.sty and its documentation can obtained at:
+% http://www.ctan.org/pkg/endfloat
+%
+% The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
+% later in the document, say, to conditionally put the References on a 
+% page by themselves.
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/url
+% Basically, \url{my_url_here}.
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+\IEEEoverridecommandlockouts
+%\usepackage[numbers]{natbib}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[english]{babel}
+\usepackage{tikz}
+\usepackage{cite}
+\usepackage{balance}
+%\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{52}}%
+\newcommand{\xmark}{\ding{56}}%
+\newcommand{\krishn}{\textcolor{purple}}
+%\usepackage{algorithm}
+%\usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage{placeins}
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+%\usepackage{algpseudocode}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage{placeins}
+\usepackage{algpseudocode}
+\usepackage[normalem]{ulem} 
+\algrenewcommand\alglinenumber[1]{\footnotesize #1}
+%\usepackage{algpseudocode}
+\usepackage[normalem]{ulem} 
+\algrenewcommand\alglinenumber[1]{\footnotesize #1}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert} 
+
+%\usepackage[skip=0cm,list=true,labelfont=it]{subcaption}
+\usepackage[list=true]{subcaption}
+\setlength{\textfloatsep}{0.05cm}
+% inlined bib file
+%\usepackage{filecontents}
+\usepackage{datetime}
+\usepackage{multirow}
+
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{hyperref}
+\def\UrlBreaks{\do/\do-}
+\usepackage{breakurl}
+\usepackage{dblfloatfix} 
+\usepackage{graphics}
+%\usepackage[breaklinks]{hyperref}
+\usepackage{titlesec}
+%\usepackage{cite}
+\usepackage{soul}
+\SetKwRepeat{Do}{do}{while}
+\usepackage{program}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,      % false: boxed links; true: colored links
+  linkcolor=blue,       % color of internal links
+  citecolor=magenta,    % color of links to bibliography
+  filecolor=cyan,       % color of file links
+  urlcolor=black,          % color of external links
+  urlcolor=magenta        % color of external links
+      }
+% \hypersetup{
+%   colorlinks=true,      % false: boxed links; true: colored links
+%   linkcolor=blue,       % color of internal links
+%   citecolor=magenta,    % color of links to bibliography
+%   filecolor=cyan,       % color of file links
+%   urlcolor=black,          % color of external links
+%   urlcolor=magenta        % color of external links
+% }
+
+%\usepackage{clrscode}
+\usepackage{graphics} % For isequal in clrscode3e
+\usepackage{bm} % For making vectors bold
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage{footnote}
+%\setcounter{algocf}{2}
+%\SetAlFnt{\small}
+\usepackage[belowskip=-15pt,aboveskip=0pt]{caption}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\def\NoNumber#1{{\def\alglinenumber##1{}\State #1}\addtocounter{ALG@line}{-1}}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%if 
+%\usepackage{clrscode} 
+% use == or = instead of \isequal
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\intextsep}{6pt}
+\titlespacing*{\section}
+{0pt}{1.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+\titlespacing*{\subsection}
+{0pt}{1.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
+
+\newcommand{\todo}[1]{\rc{TODO: #1}}
+
+\newcommand{\secref}[1]{{\S\ref{#1}}}
+\newcommand{\fref}[1]{\mbox{Figure~\ref{#1}}}
+\newcommand{\tref}[1]{\mbox{Table~\ref{#1}}}
+
+\newcommand{\mypara}[1]{\smallskip\noindent\emph{#1}\xspace}
+\newcommand{\myparab}[1]{\vspace{0.025in}\noindent\textbf{#1}}
+\newcommand{\myparasc}[1]{\smallskip\noindent\textsc{#1}\xspace}
+\newcommand{\note}[1]{\textbf{\color{red}{[#1]}}}
+\newcommand{\eg}{{\it e.g.}\xspace}
+\newcommand{\ie}{{\it i.e.}}
+\newcommand{\etal}{{\em et al.}\xspace}
+\newcommand{\eat}[1]{}
+%\usepackage{setspace}
+
+\newcommand{\arch}{{ChangeMe}\xspace}
+%\usepackage{todonotes}
+%\usepackage{color}
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\begin{document}
+
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{Tackling Roadblocks of Network Function Parallelism for Efficient Service Function Chaining}
+%
+%
+% author names and IEEE memberships
+% note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
+% a structure at a ~ so this keeps an author's name from being broken across
+% two lines.
+% use \thanks{} to gain access to the first footnote area
+% a separate \thanks must be used for each paragraph as LaTeX2e's \thanks
+% was not built to handle multiple paragraphs
+%
+
+\author{Sujeeth Kumar Reddy Bhavanam, Venkatarami~Reddy~Chintapalli, ~\IEEEmembership{Graduate Student Member,~IEEE,} Bheemarjuna~Reddy~Tamma, ~\IEEEmembership{Senior Member,~IEEE}, and C.~Siva~Ram~Murthy, ~\IEEEmembership{Fellow,~IEEE}
+\thanks{Sujeeth Kumar Reddy Bhavanam, Venkatarami~Reddy~Chintapalli, Bheemarjuna~Reddy~Tamma, and C.~Siva~Ram~Murthy are with the Department of Computer Science and Engineering, Indian Institute of Technology Hyderabad,~India.}
+%\thanks{$^\star$Rajat Partani is with the Department of Computer Science and Engineering, National Institute of Technology Surathkal, India.}
+%\thanks{$^\$$C.~Siva~Ram~Murthy is with Indian Institute of Technology Madras, Chennai, India.}
+\thanks{This research work was supported by the Science and Engineering Research Board, New Delhi, India. Grant number: JBR/2021/000005.}	
+  
+}
+
+
+% \author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
+%         John~Doe,~\IEEEmembership{Fellow,~OSA,}
+%         and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}% <-this % stops a space
+% \thanks{M. Shell was with the Department
+% of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta,
+% GA, 30332 USA e-mail: (see http://www.michaelshell.org/contact.html).}% <-this % stops a space
+% \thanks{J. Doe and J. Doe are with Anonymous University.}% <-this % stops a space
+% \thanks{Manuscript received April 19, 2005; revised August 26, 2015.}}
+
+% note the % following the last \IEEEmembership and also \thanks - 
+% these prevent an unwanted space from occurring between the last author name
+% and the end of the author line. i.e., if you had this:
+% 
+% \author{....lastname \thanks{...} \thanks{...} }
+%                     ^------------^------------^----Do not want these spaces!
+%
+% a space would be appended to the last name and could cause every name on that
+% line to be shifted left slightly. This is one of those "LaTeX things". For
+% instance, "\textbf{A} \textbf{B}" will typeset as "A B" not "AB". To get
+% "AB" then you have to do: "\textbf{A}\textbf{B}"
+% \thanks is no different in this regard, so shield the last } of each \thanks
+% that ends a line with a % and do not let a space in before the next \thanks.
+% Spaces after \IEEEmembership other than the last one are OK (and needed) as
+% you are supposed to have spaces between the names. For what it is worth,
+% this is a minor point as most people would not even notice if the said evil
+% space somehow managed to creep in.
+
+
+
+% The paper headers
+\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
+% The only time the second header will appear is for the odd numbered pages
+% after the title page when using the twoside option.
+% 
+% *** Note that you probably will NOT want to include the author's ***
+% *** name in the headers of peer review papers.                   ***
+% You can use \ifCLASSOPTIONpeerreview for conditional compilation here if
+% you desire.
+
+
+% If you want to put a publisher's ID mark on the page you can do it like
+% this:
+%\IEEEpubid{0000--0000/00\$00.00~\copyright~2015 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract or keywords.
+\begin{abstract}
+Together, Network Function Virtualization (NFV) and Service Function Chaining (SFC) have made it possible to manage networks and engineer traffic in a flexible and agile manner. Due to SFC's sequential execution design, the latency would increase linearly as more functions were added. Network function parallelization has enabled independent functions to operate concurrently and by doing so significantly reducing the latency. However, existing solutions do not take into consideration the additional overheads caused due to parallelism namely packet copy/merge overhead and packet deposition overhead. Hence, in this work, we try to meet the end-to-end latency requirements of the SFC while minimizing packet deposition and packet copy/merge overheads. We provide an Integer Linear Program formulation for the above objective and also provide a heuristic algorithm.
+\end{abstract}
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+Network function virtualization, service function chaining, packet deposition, packet copy/merge
+\end{IEEEkeywords}
+
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+% The very first letter is a 2 line initial drop letter followed
+% by the rest of the first word in caps.
+% 
+% form to use if the first word consists of a single letter:
+% \IEEEPARstart{A}{demo} file is ....
+% 
+% form to use if you need the single drop letter followed by
+% normal text (unknown if ever used by the IEEE):
+% \IEEEPARstart{A}{}demo file is ....
+% 
+% Some journals put the first two words in caps:
+% \IEEEPARstart{T}{his demo} file is ....
+% 
+% Here we have the typical use of a "T" for an initial drop letter
+% and "HIS" in caps to complete the first word.
+
+\IEEEPARstart{N}{etwork} Function Virtualization (NFV) is a technology that is changing the way networks are designed, built, and managed. It is a process of decoupling network functions from dedicated hardware appliances, such as routers, switches, and firewalls, and running them on virtual machines (VMs) instead. 
+%In other words, NFV virtualizes network functions so they can run on generic servers, reducing the need for proprietary hardware.
+%The importance of NFV lies in its ability to increase network flexibility, reduce costs, and accelerate service delivery. 
+In the traditional network model, each network function requires a dedicated hardware device. This makes it difficult and expensive to scale, upgrade, and maintain the network. Additionally, as new services are introduced, new hardware must be added, which is not only costly but also time-consuming. This is where NFV comes in.
+By virtualizing network functions, NFV allows network operators to use generic servers to run multiple network functions simultaneously. This means that the same hardware can be used for different services, reducing the need for specialized hardware. %Furthermore, NFV can reduce costs by simplifying network management and reducing the need for manual intervention.
+Furthermore, with NFV, network functions can be deployed and managed remotely, reducing the need for on-site personnel.
+
+Another significant advantage of NFV is that it allows network operators to quickly and easily introduce new services instead of waiting for new hardware to be installed.
+%Instead of waiting for new hardware to be installed, network operators can simply deploy new virtual network functions (VNFs) on existing servers.
+This speeds up service delivery and allows operators to respond quickly to changing market demands.
+Moreover, NFV makes it easier to scale network functions up or down, depending on demand. This is particularly useful in situations where traffic is unpredictable or fluctuates frequently. With NFV, operators can add or remove VNFs as needed, allowing them to respond to traffic spikes or dips in real-time.
+
+A network service in NFV is provided by a set of preset VNFs referred to as service function chains (SFCs). Typically, SFCs operate in a serial processing mode, where network packets pass sequentially through VNFs in a predetermined order determined by a particular SFC as seen in Fig.~\ref{}. Studies like \cite{JSAC} and \cite{TPDS-serial} have focussed on minimizing end-to-end latency in serial SFC.  However, the delay incurred by the SFC due to serial processing increases linearly with the SFC length, which leads to an unacceptable delay in low- and ultra-low latency applications. To address this problem, parallel SFCs referred to as PSFCs were used to make certain VNFs in the SFC that were independent of each other run concurrently in order to reduce the end-to-end delay significantly. Works like \cite{NFP} and \cite{Parabox} have shown that SFC parallelism can reduce SFC length and latency significantly. Fig.~\ref{} shows an example of converting a sequential SFC to a PSFC with all the independent VNFs running in parallel and this configuration of the PSFC is referred to as full parallelism. However, most works have assumed that in these configurations the parallel network functions are all installed in the same physical server and each VNF can access the packets via memory reference since all the VNFs are in the same server but this may not be the most optimal solution.
+However, when VNF instances are installed in different servers, to enable parallelism, a server should duplicate each packet and distribute them to parallel VNFs installed in different servers. Similarly, the packets output by different servers need to be aggregated and combined somewhere. Such
+packet processing overhead could be significant, especially for flows with burst and large packets, and become a bottleneck that offsets the benefit of parallelization and we refer to this roadblock as packet copy/merge cost. This is where the concept of partial parallelism comes into the picture. Partial parallelism is a concept where not all the parallelizable VNFs are run in parallel rather some of them are run sequentially in a particular branch of the PSFC as seen in Fig.~\ref{}. We use this concept to reduce the degree of parallelism (refers to the number of branches in the PSFC) of the PSFC causing fewer packets to be duplicated or merged and thus reducing the delay added. 
+Additionally, another roadblock comes with parallelism which is the packet deposition problem.
+Look at Fig.~\ref{Fig 0}, it is an illustrative example explaining what packet deposition is and how it can cause serious issues in a real network. Here, assume server one and server two are running two VNFs that can be processed parallelly in an SFC and that packets 1a and 2a are packets that belong to the same SFC and have been duplicated in a previous server. Packets 1a and 2a have to be processed in server 1 and server 2, respectively and then merged in server 3 before further processing can happen in server 3 on this packet. However, the time taken to process packet 1a is larger than 2a, so packet 2a has to wait in the buffer of server 3. Now as shown in Fig.~\ref{Fig 0}, new packets are still being sent to server 3 from server 2 and this will cause a buffer overload in server 3, causing it to drop packets and in this process, packet 2a may be dropped before packet 1a arrives. This will then cause packet re-transmission to occur, resulting in an end-to-end delay that is far from the expected one. To avoid such problems, packets 1a and 2a should be routed in such a way that they arrive at similar times in server 3 to avoid storage of packets in the buffer for long durations.
+
+Therefore, parallelism comes with certain roadblocks or overheads namely packet copy/merge cost and packet deposition. Existing works like \cite{TWC} have done parallel SFC deployment, but their objective was only to minimize end-to-end latency while ignoring the overheads. Although \cite{TON} took packet copy and merge delay into consideration for parallel VNF routing to minimize end-to-end latency, they failed to account for the packet deposition problem. In \cite{TON-extension} which jointly addressed the VNF deployment and routing problems to minimize end-to-end latency but failed to focus on the overheads caused due to parallelism. Although work \cite{appm} focused on reducing the delay difference between parallel branches to reduce packet deposition, they only tried to balance the function processing delays across branches and not the overall branch delay by considering link delays as well. We have taken all these factors into account in our work and to the best of our knowledge, we are the first to address the overheads jointly caused due to parallelism while meeting end-to-end delay constraints.
+
+In this work, we provide a comprehensive study of why in SFC placement problems addressing overheads caused due to parallelism can improve network performance. We explain the overheads and also provide methods to mitigate them through motivating examples. We then move on to formally present the problem as an integer linear program but since this is a NP-hard problem we provide a heuristic solution as well. We compare the heuristic algorithm with the ILP and two greedy algorithms and through extensive simulations, our key findings are as follows:
+\begin{itemize}
+    \item The heuristic solution only deviates 2.5-4.4\% in latency and 18.6-26.2\% in packet deposition from the ILP. So our solution, in fact, is an excellent choice.
+    \item We also concluded through the comparisons with the greedy solutions that VNFs that can be run in parallel, it isn't optimal to run all of them in parallel due to the additional overhead of packet copying and merging.
+    \item Balancing VNF processing time across branches is not enough to mitigate the packet deposition problem. The delay difference between branches has to be minimized and in order to do so we have to consider the link delays of the physical topology as well. 
+    \item Also, when VNFs are running in parallel and the packets have to be merged in a new server, routing these packets in shortest paths isn't optimal since the arrival times of these packets will vary and cause a lot of additional memory to be used. Instead with the tradeoff of a little extra bandwidth, we should route smaller delay packet in a longer path to try and ensure the packets arrive at the server at a similar time.
+\end{itemize}
+
+The rest of this paper is organized as follows. Section II reviews the work related to NFV and parallelism. We introduce the background and illustrate some motivating examples in Section III. Section IV provides an integer linear program formulation of our problem statement. Section V explains the proposed heuristic solution and Section VI provides inference on the simulation results that were obtained. Finally, Section VII concludes our work.
+
+
+% \IEEEPARstart{N}{etwork} Function Virtualization (NFV) brings
+% low cost, high flexibility and efficient maintenance to
+% network operation and is a promising future network technology. In data center networks (DCNs) and Internet service
+% provider (ISP) networks, network functions (NFs), such as
+% firewalls (FWs), intrusion detection systems (IDSs), load balancers (LBs), virtual private networks (VPNs), traffic monitors
+% (TMs), and so on, are deployed to provide diverse services
+% for network applications. Traditionally, NFs are embedded in dedicated hardware devices, which incur high network service creation and operation costs. Furthermore,
+% it is both time-consuming and inconvenient to create and
+% update network services using hardware-based NFs. As a new
+% computing paradigm, NFV decouples NF software from dedicated hardware equipment and implements the corresponding
+% functionality as Virtual Network Functions (VNFs) on general-purpose servers so as to reduce the setup costs and enable
+% flexible NF deployment and service customization.
+% In NFV, a network service is delivered by a series of
+% predefined VNFs called service function chains (SFCs).
+% Usually, SFCs work in a serial processing mode, where
+% network packets go through VNFs one by one in a specific order predefined by a specific SFC. However, the delay
+% incurred by the SFC due to serial processing increases linearly with the SFC length, which leads to an unacceptable delay in low- and ultra-low latency applications, such as unmanned driving, telemedicine, real-time analysis tasks, and online games . Aiming to overcome this problem, SFC parallelism was adopted in our previous work to accelerate network-deployed SFCs. Several works have shown that SFC parallelism can reduce the length and delay of SFCs significantly.
+%  In a study it was found that more than 40 \% of the NFs in a given SFC can be parallelizable. So the given sequential SFC can be converted to a parallel p-SFC in which certain NFs run parallelly and the end-to-end latency can be reduced significantly.
+% p-SFC = {PE1,PE2,.....,PEn} where each PEi consists of one or many VNFs that can be run parallelly.
+% You must have at least 2 lines in the paragraph with the drop letter
+% (should never be an issue)
+\begin{figure}[t]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Server packet diagram.png}
+\caption{Illustrative example}
+\label{Fig 0}
+\vspace{0.4cm}
+\end{figure}
+
+\section{Related Work}\subsection{Subsection Heading Here}
+Subsection text here.
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\subsubsection{Subsubsection Heading Here}
+Subsubsection text here.
+
+\section{Background and Motivation}
+Although NFV architecture has allowed a more flexible, cost-effective, and efficient approach to network operations however software-based functions usually introduce a longer latency, especially in the case when the service function chaining is done sequentially. Work \cite{NFP} has found that almost 41.5\% of the network functions can be run in parallel. Recent works have shifted from sequential to parallel SFC (PSFC) setup to exploit this property to lower the latency. Many papers like \cite{TON},\cite{SFT-box},\cite{TWC} and \cite{TON-extension} focused on providing efficient solutions to strictly minimize end-to-end latency but failed to take into consideration additional overheads caused due to parallelism. In this work, we provide a mathematical formulation of PSFC embedding while considering the overheads and also provide a heuristic solution.
+\subsection{SFC Parallelism Overheads}
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\subsubsection{Packet copy/merge cost}
+It is important to understand that exploiting full parallelism is not always an option, especially in the case of ultra-low latency tasks like URLLC functions. When multiple VNFs are run in parallel in different nodes, each node has to get a copy of the packet, and after processing them, all these packets have to be merged before sending them to the next VNF in the PSFC. This overhead of copying and merging packets is not negligible and needs to be considered when calculating the end-to-end delay of the PSFC. 
+
+\subsubsection{Packet deposition}
+In a given parallel branch of the SFC, the packets that are processed by each individual parallelizable VNF have to be merged before being sent to the next set of VNFs. But before we can merge, all the packets have to be processed by each VNF of the parallel branch and the arrival time of each packet will vary, so the packets have to be cached in memory before the merge. If the delay difference in the arrival times is high then the memory utilization to cache the packets will increase. Also, these packets can be dropped due to insufficient memory availability before the merge occurs and then packet retransmission will have to happen which may cause a violation in the service level agreements (SLAs).
+
+Addressing overheads such as packet deposition and packet copy/merge cost in parallel service function chaining is crucial for the following reasons:
+\begin{itemize}
+    \item \textbf{Performance Impact:} These overheads can significantly impact the performance of the network, leading to slower processing times and reduced efficiency. This can result in higher latency and reduced network throughput, ultimately affecting the user experience.
+    \item \textbf{Resource Utilization:} These overheads can consume valuable computing resources such as CPU and memory, that could otherwise be used for other important tasks.
+    \item \textbf{Scalability:} As the network grows, these overheads can limit the scalability of the network, hindering its ability to handle increasing demand.
+    \item \textbf{Cost:} The cost of these overheads can add up quickly, leading to increased operational expenses and reduced profitability.
+Therefore, addressing these overheads is critical to ensuring high-performance, efficient, scalable, and cost-effective network operations.
+
+\end{itemize}
+
+\subsection{Motivating examples}
+This section provides some examples to highlight observations made to reduce the packet copy/merge cost and packet deposition overhead.\\ There were mainly two key observations: \\
+Some notations used to understand the examples are e2e, $T_w$, $T_d$, and M. e2e represents the end-to-end delay of the PSFC request time taken by the PSFC request, which is only affected by the critical branch (longest delay branch in PSFC). $T_w$ represents the summation of the delay difference between the critical and non-critical branches. $M$ represents the additional memory required to store the packets in memory before the merge function, which can be calculated by multiplying the $T_w$ and the average arrival rate of the PSFC request, which is known beforehand. $T_d$ represents the total time taken to copy/merge all additional packets at a node.\\
+
+Look at Fig.~\ref{Fig 1}, which shows a case of full parallelism. Here, let’s assume that the virtual links between the functions are obtained by traveling in the shortest paths. An additional term that gets added to the e2e latency calculation is the cost of copying and merging packets. The significant increase in e2e latency was due to the fact that three copies had to be made. This is an overhead that cannot be ignored. At the same time, the delay difference between branches is high, causing an additional 140 Mb required to store early arriving packets before the merge. Fig.~\ref{Fig 2} showcases the recent work’s In~\cite{TON} idea, which is a shift to partial parallelism. Here the idea was to run certain functions in parallel and then follow the rest in a sequential manner to reduce the degree of parallelism in the SFC and bring down the effects of the copy/merge overhead. They reduced the e2e latency and delay difference compared to full parallelism, but we can still do better by making additional changes in the PSFC structure. Look at Fig.~\ref{Fig 3}, instead of limiting one function per branch as done in Fig.~\ref{Fig 2}, we can make certain branches (ideally non-critical branches) run functions in a sequential manner, and this will allow the non-critical branch’s delay to increase as more functions are being executed thus causing a reduction in the delay difference. In Fig.~\ref{Fig 2}, $f_1$ and $f_2$ ran parallelly, followed by $f_3$, whereas, in Fig.~\ref{Fig 3}, $f_2$ and $f_3$ were running sequentially, but these two combined were running in parallel to $f_1$. Just by doing so, we can not only reduce the delay difference but also reduce the e2e latency since we are processing an additional function in a non-critical branch (assuming the addition of this function keeps the branch as a non-critical one) and thus preventing this function’s processing time to be added to the e2e latency value. The first takeaway is that partial parallelism is good for addressing the packet copy/merge overhead, and making functions run sequentially in a parallel branch helps reduce e2e latency and delay difference between branches to address the packet deposition overhead.\\
+
+Notice that Fig.~\ref{Fig 4} and Fig.~\ref{Fig 2} are the same setup. The only difference is that the links in the non-critical branch are slightly longer in delay because of using longer paths. Always moving in the shortest paths from one node to another, which most existing works do, isn’t the most optimal way.  We see that the delay difference in Fig.~\ref{Fig 4} is lower than in Fig.~\ref{Fig 2} because we increased the delay of the non-critical branches by traversing through longer paths. However, we haven’t compromised on the e2e latency as the critical branch is still traversing in the shortest route. We took advantage of the fact that only the critical branch’s delay affects the e2e latency to increase the delay of non-critical branches to reduce the delay difference amongst branches.
+
+In~\cite{appm}, the authors addressed the problem of packet deposition by ensuring that the summation of function processing delays in a branch is similar to the critical branch’s function processing delay by using a bin packing algorithm without taking into consideration the physical links of the network topology. Assume we are given Fig.~\ref{Fig 5} as the PSFC, what \cite{appm} work will do is convert it to a structure as seen in Fig.~\ref{Fig 6} and then try to find nodes such that a hop from node to node is always in the shortest path. While the delay difference has dropped, we can still do better by routing the traffic of non-critical branches better. In Fig.~\ref{Fig 7}, we increase the link delays of the non-critical branch to reduce the delay difference significantly while keeping the e2e latency the same. The final takeaway is that traversing the shortest paths from node to node is not always the optimal choice. Sometimes it is good to move in longer routes, especially in non-critical branches to address the packet deposition overhead.
+
+% \begin{figure}[t]
+% \centering
+%     \vspace{-0.2cm}
+%     \begin{subfigure}[h]{0.25\textwidth}
+%             \includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 21.png}
+%         \caption{Full Parallelism}
+%         \label{Fig 1 a}
+%     \end{subfigure}
+%     \begin{subfigure}[h]{0.25\textwidth}
+%         \vspace{-0.2 cm}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 23.png}
+%             \caption{Partial Parallelism}
+%         \label{Fig 1 b}
+%     \end{subfigure}
+%     \begin{subfigure}[h]{0.25\textwidth}
+%         \vspace{-0.2 cm}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 22.png}
+%             \caption{Another Partial Parallelism}
+%         \label{Fig 1 c}
+%     \end{subfigure}
+%     \begin{subfigure}[h]{0.25\textwidth}
+%         \vspace{-0.2 cm}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 24.png}
+%             \caption{Partial Parallelism but with different routing}
+%         \label{Fig 1 d}
+%     \end{subfigure}
+%         \caption{Observations 1}
+% \end{figure}
+
+\begin{figure}[t]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 21.png}
+\caption{Full parallelism of PSFC.}
+\label{Fig 1}
+\vspace{0.4cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 23.png}
+\caption{Partial parallelism of PSFC.}
+\label{Fig 2}
+\vspace{0.3cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 22.png}
+\caption{Improvement to partial parallelism.}
+\label{Fig 3}
+\vspace{0.3cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 24.png}
+\caption{Using longer paths in partial parallelism.}
+\label{Fig 4}
+\vspace{0.3cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 20.png}
+\caption{Full parallelism PSFC request.}
+\label{Fig 5}
+\vspace{0.3cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 15.png}
+\caption{\cite{appm} work's conversion of the PSFC request.}
+\label{Fig 6}
+\vspace{0.3cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 19.png}
+\caption{Using longer paths in \cite{appm} work's conversion of the PSFC request.}
+\label{Fig 7}
+\vspace{0.5cm}
+\end{figure}
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\section{Problem Formulation}
+In this paper, we study the optimization of parallel SFC instance selection in NFV-enabled networks while minimizing overheads caused due to parallelism in the network and meeting end-to-end latency constraints. Accordingly, we formulated an Integer Linear Program model for the problem. The notations used in this formulation are summarized in the Table.~\ref{table ilp}.
+\subsection{Network Model}
+The topology of the network is abstracted as an undirected graph G = (V, E) where V represents the set of servers in the network and E represents the set of network links connecting any two servers. We assume that each network link has a link delay and bandwidth limitation associated with it, which is represented by $t_{ij}$ and $BW_{ij}$ respectively, where $t_{ij}$ represents the link delay between servers $V_{i}$ and $V_{j}$ and $BW_{ij}$ represents the bandwidth capacity of a physical link between servers $V_{i}$ and $V_{j}$. Each server $V_{i}$ has a fixed number of VMs running on it, and each VM can run one VNF at a time. Each VM has a fixed processing capacity of $\lambda$ packets per second to allow the shareability of VNFs among PSFC requests. Currently, we assume that all VMs running on different servers have the same processing capacity. For example, if three PSFC requests have an arrival rate of µ1, µ2, and µ3 respectively, and must utilize a function f running in $VM_j$ of server $V_{i}$, then it must obey the constraint $\lambda$ $\geq$ µ1 + µ2 + µ3. Finally, since this work focuses on selecting VNF instances of the PSFC, we assume that VNFs have already been deployed and running on the servers where $R_i$ represents the set of VNFs running on server Vi.
+\subsection{Parallel SFC model}
+Let C denote the set containing a batch of PSFC requests where $\texttt{C}_i$ represents the $i^{th}$ request. Each $C_i$ can be represented as a set of parallel entities PE, i.e $\texttt{C}_i$ = {$PE_{i,1}$, $PE_{i,2}$,….$PE_{i,n}$} where each $PE_{i,j}$ represents a set of VNFs that can be run in parallel. The work \cite{NFP} is used to examine whether two NFs are parallelizable. For a given j where $\lVert PE_{ij} \rVert > 1$, implies that all VNFs in this set can be run in parallel and that the PSFC structure can have multiple branches and a particular branch $x$ can be represented by $B_{i,j,x}$ in the $j^{th}$ PE of the $i^{th}$ request. Within a branch $x$, multiple VNFs can run sequentially to allow for partial parallelism. Each function in a branch is represented by $f_{i,j,x,t}$ i.e it represents the $t^{th}$ function in the $x^{th}$ branch of the $j^{th}$ PE of the $i^{th}$ request. We also represent $B_{i,j,c}$ as the critical branch of $PE_{i,j}$ which indicates the branch that has the highest latency. Observe that these branches are the only ones contributing to the final end-to-end latency and every other non-critical branch is just useful in reducing overall latency by processing packets in parallel.
+In this work, we assume that in a given $C_i$ there is only one $PE_i$ whose $\lVert PE_i \rVert > 1$. The rest of the $PE_i$'s have their $\lVert PE_i \rVert = 1$.
+\subsection{Problem Statement}
+In this section, we model an integer linear program to formulate the problem statement. Table.~\ref{table ilp} summarizes the variables used to formulate the integer program. \\
+
+
+\begin{tabular}{|l|l|}\label{table ilp}\\
+\hline
+\textbf{Notations} & \textbf{Description} \\
+\hline
+$PSFC$ & parallelizable service function chain \\
+\hline
+$V$ & the set of all nodes in $G$ \\
+\hline
+$E$ & the set of all edges (links) in $G$ \\
+\hline
+$N_{u}$ & the neighbor nodes of node $u$ \\
+\hline
+$(u, v)$ & an edge of $G$, from node $u$ to $v$ \\
+\hline
+$S$ & source node \\
+\hline
+$D$ & destination node \\
+\hline
+C & batch of PSFC requests \\
+\hline 
+$C_i$ & $i^{\texttt{th}}$ PSFC request \\
+\hline 
+$T_{\ell}$ & end-to-end delay requirement \\
+$\thickspace$ & of a PSFC request \\
+\hline
+$\lambda$ & average arrival rate of a PSFC request \\
+\hline
+$PE$ & stands for parallel entity \\
+\hline
+$PE_j$ & $j^{\texttt{th}}$ parallel entity in a given\\
+$\thickspace$ & PSFC request \\
+\hline  
+$t_f$ & processing time of function $f$ \\
+\hline 
+$t_{u,v}$ & link delay of edge $(u, v)$ \\
+\hline
+$\mathcal{F}$ & set of functions used in the PSFC\\
+\hline
+$\mathcal{F}_i$ & set of functions used in $PE_i$\\
+\hline
+$a$ & represents the index of the\\ 
+$\thickspace$ & $PE$ that has more than one VNF. \\
+\hline
+$B_i$ & represents the number of branches\\
+$\thickspace$ & present in $PE_i$. \\
+\hline
+$\texttt{N}_{i,b,s,f,u}$ & is a binary variable which denotes if VNF $f$ of the\\
+$\thickspace$ & $s^{th}$ function of the $b^{th}$ branch of the $i^{th}$ PE which \\
+$\thickspace$ & has been deployed on node $u$ has been selected or not.\\
+\hline
+$\texttt{E}_{i,i', b,b', s,s', u, v}$ & is a binary variable which denotes if the\\
+$\thickspace$ & edge $(u,v)$ is used between the selected nodes of \\
+$\thickspace$ & $s^{th}$ function in $b^{th}$ of $i^{th}$ PE and \\
+$\thickspace$ & $s'^{th}$ function in $b'^{th}$ of $i'^{th}$ PE \\
+\hline
+\end{tabular} \\
+
+We begin by presenting the \textbf{objective function} of our ILP as follows:
+\begin{equation}
+\boxed{
+\min_{\mathbb{E}^{\theta}}~~ \alpha\left(B_a \max_b \left( D_b \right) -  \sum_{b=1}^{B_a} D_b\right) + \beta \left(t_{e_2e}\right)} 
+\end{equation}
+Here $\mathbb{E}^{\theta}$ represents the set of all possible valid embeddings, while $\alpha$ and $\beta$ are hyperparameters that help in balancing the desired tradeoff between packet deposition (given by the expression coupled with $\alpha$) and the end-to-end latency (scaled by $\beta$), with the normalizing constraint "$\alpha + \beta = 1$."
+and,
+\begin{equation}
+\begin{split}
+    D_b = \sum_{s=1}^{B_a} \sum_{f \in \mathcal{F}_a} \sum_{u \in V} t_{f}*N_{a,b,s,f,u} +\\ \sum_{s=1}^{B_a -1}( \sum_{(u,v) \in E} t_{u,v}*E_{a,a,b,b,s,s+1,u,v} +\\ \sum_{(u,v) \in E} t_{u,v}*(E_{a-1,a,1,b,1,1,u,v} + E_{a,a+1,b,1,B_a,1,u,v}))
+\end{split}
+\end{equation}
+and,
+\begin{equation}
+\begin{split}
+    t_{e_2e} = (B_a - 1)*COPY + (B_a - 1)*MERGE \\+ \sum_{i=1}^{a-2} (\sum_{f \in \mathcal{F}_i} \sum_{u  \in V} t_f*N_{i,1,1,f,u} \sum_{(u,v) \in E} t_{u,v}*E_{i,i+1,1,1,1,1,u,v})\\ + \theta + \sum_{i=a+1}^{\lVert PE \rVert -1} (\sum_{f \in \mathcal{F}_i} \sum_{u  \in V} t_f*N_{i,1,1,f,u} \sum_{(u,v) \in E} t_{u,v}*E_{i,i+1,1,1,1,1,u,v})\\ 
+\end{split}
+\end{equation}
+
+Here $D_b$ represents the branch delay of a particular branch in a PE. In order to reduce the packet deposition, we have to minimize the branch delays between non-critical branches with the critical branch. The additional memory required to store the early coming packets of the non-critical branch is equal to the average arrival rate of PSFC times the delay difference. Now we have to add this value for all the non-critical branches since each of these branches will be requiring additional memory to store the packets. Assume that there are 4 branches in the PE, and let $t_c$ be the critical branch's delay and $t_1$, $t_2$, $t_3$ be the delay of the non-critical branches and $\lambda$ be the average arrival rate of PSFC. The total additional memory requirement is $\lambda * ((t_c-t_1) + (t_c - t_2) + (t_c - t_3))$ and this can be converted to $\lambda * (4*t_c - (t_c + t_1 + t_2 + t_3))$. This converted expression is what the objective represents and we have to minimize this value.
+
+Note that in the objective function, we use $\max_b ( D_b )$ but $\max$ is not a linear operation. In order to construct an integer linear program, we must first make the objective linear by removing the $\max$ operation. We did this by introducing an auxiliary variable called $\theta$ and replaced
+$\max_b ( D_b )$ with $\theta$ and also added a new constraint where this $\theta$ is greater than $D_b \space \forall b \in B_a$. The $\theta$ here is the auxiliary variable that basically stores the maximum delay of the branch in the $PE_a$.\\ 
+The above objective is subject to the following constraints,
+
+\begin{equation}
+\begin{split}
+    \sum_{f \in \mathcal{F}_i} \sum_{u \in V} N_{i,b,s,f,u} = 1 \\
+    \forall i \in (1,\lVert PE \rVert)\\
+    \forall b \in (1,B_i)\\
+    \forall s \in (1,B_i)
+\end{split}
+\end{equation}
+This constraint ensures that each function slot s in a branch for a particular $PE_i$ has only function picked.
+
+\begin{equation}
+\begin{split}
+    \sum_{i=1}^{\lVert PE \rVert} \sum_{b=1}^{B_i} \sum_{s=1}^{B_i} \sum_{u \in V} N_{i,b,s,f,u} \leq 1 \\
+    \forall f \in \mathcal{F}
+\end{split}
+\end{equation}
+This constraint ensures that all the unique VNFs are picked at most once. 
+
+\begin{equation}
+\begin{split}
+    N_{i,b,s,f,u} = 0 \\
+    \forall i \in (1,\lVert PE \rVert)\\
+    \forall b \in (1,B_i)\\
+    \forall s \in (1,B_i) \\
+    \forall f \notin \mathcal{F}_i\\
+    \forall u  \in V\\
+\end{split}
+\end{equation}
+This constraint ensures that only those functions are selected that belong to the respective $PE_i$.
+
+\begin{equation}
+\begin{split}
+    N_{i,b,s,f,u} \leq dep_{u,v}\\
+    \forall i \in (1,\lVert PE \rVert)\\
+    \forall b \in (1,B_i)\\
+    \forall s \in (1,B_i) \\
+    \forall f \in \mathcal{F} \\
+    \forall u \in V
+\end{split}
+\end{equation}
+This constraint ensures that a function f on u is picked only if f is deployed on u.
+
+% \begin{equation}
+% \begin{split}
+%     \sum_{b=1}^{B_i} \sum_{s=1}^{B_i} \sum_{f \in \mathcal{F}_i} \sum_{u \in V} N_{i,b,s,f,u} = \lVert \mathcal{F}_i \rVert \\
+%      \forall i \in (1,\lVert PE \rVert)
+% \end{split}
+% \end{equation}
+% This constraint ensures that the total number of functions picked in for a $PE_i$ is the same as the number of parallelizable VNFs in that $PE_i$.
+
+% \begin{equation}
+% \begin{split}
+%     \sum_{i=1}^{\lVert PE \rVert} \sum_{i'=1}^{\lVert PE \rVert} \sum_{b=1}^{B_i} \sum_{b'=1}^{B_{i'}}  \sum_{s=1}^{B_i} \sum_{s'=1}^{B_{i'}} \sum_{u \in V} \sum_{v \in V} E_{i,i',b,b',s,s',u,v} = 0 \\
+%     \text{when an edge } (u,v) \notin E
+% \end{split}
+% \end{equation}
+% This constraint ensures that only those edges that exist in the topology are picked.
+
+\begin{equation}
+\begin{split}
+     \sum_{v \in N_u} E_{a,a,b,b,s,s+1,v,u} - \sum_{w \in N_u} E_{a,a,b,b,s,s+1,u,w} \\
+     = \sum_{f' \in \mathcal{F}_i} N_{a,b,s+1,f',u} - \sum_{f \in \mathcal{F}_i} N_{a,b,s,f,u} \\
+     \forall b \in (1,B_i) \\
+     \forall s \in (1,B_i-1) \\
+     \forall u \in V \\
+\end{split}
+\end{equation}
+This is the flow conservation constraint within a branch in a $PE_i$. The LHS of the equation is the difference between the incoming edges to node u and the outgoing edges from node $u$. A node $u$ can be either a VNF node or an intermediary node in the route from one VNF to another in the PSFC. All the intermediary nodes should have the same incoming edges as outgoing. So, for intermediary nodes, the RHS is 0-0=0 because no VNFs on node $u$ have been picked (since they are just nodes in the route) so both the summations equate to 0. The RHS is 1 when a VNF of slot $s+1$ is selected on node $u$ and the VNF of slot $s$ is not selected on node u meaning the incoming edges to node $u$ are greater than the outgoing edges since the route goes from slot $s$ to $s+1$ so slot $s+1$ should have edges coming towards it. If the VNF of slot $s$ is selected on node $u$ and the VNF of slot $s+1$ is not selected then the RHS is -1 indicating the outgoing edges from node $u$ are greater than the incoming edges since the route goes from slot $s$ to $s+1$ so slot $s$ should have edges leaving it.
+Note if VNFs of slot $s$ and $s+1$ are in node $u$, the difference will be 0 (1-1) because whatever edges go from node $u$ have to come back since both the VNFs are in node $u$.
+
+\begin{equation}
+\begin{split}
+     \sum_{v \in N_u} E_{i,i+1,b,b',B_i,1,v,u} - \sum_{w \in N_u} E_{i,i+1,b,b',B_i,1,u,w} \\
+     = \sum_{f' \in \mathcal{F}_{i+1}} N_{i+1,b',1,f',u} - \sum_{f \in \mathcal{F}_i} N_{i,b,B_i,f,u} \\
+     \forall i \in (1,\lVert PE \rVert-1) \\
+     \forall b \in (1,B_i) \\
+     \forall b' \in (1,B_{i+1}) \\
+     \forall u \in V \\
+\end{split}
+\end{equation}
+This is the flow conservation constraint between PEs. The explanation remains the same as the above constraint except here we are connecting VNFs from adjacent PEs i.e. the last VNF of the current PE has to be routed to the first VNF of the next PE.
+
+\begin{equation}
+\begin{split}
+     \sum_{b=1}^{B_a} \sum_{s=1}^{B_a - 1} arrival_{SFC} * E_{a,a,b,b,s,s+1,u,v}\\ + \sum_{i=1}^{\lVert PE \rVert} \sum_{b=1}^{B_i} \sum_{b'=1}^{B_{i+1}} arrival_{SFC} * E_{i,i+1,b,b',B_i,1,u,v} \leq BW_{u,v} \\
+    \forall (u,v) \in  E\\
+\end{split}
+\end{equation}
+This constraint ensures that all edges picked have enough bandwidth. The first term in the LHS does the bandwidth summation for the branches within a PE whereas the second term does the bandwidth summation across adjacent PEs.
+
+\begin{equation}
+\begin{split}
+    \sum_{i=1}^{\lVert PE \rVert} \sum_{b=1}^{B_i} \sum_{s=1}^{B_i} arrival_{SFC} * N_{i,b,s,f,u} \leq CAP_{f,u} \\
+    \forall f \in \mathcal{F}\\
+    \forall u \in V\\
+\end{split}
+\end{equation}
+This constraint ensures that a node running VNF $f$ is picked only if it has sufficient resources to service that PSFC.\\
+
+\begin{equation}
+\begin{split}
+ t_{e_2e}\leq T_l\\ 
+\end{split}
+\end{equation}
+This constraint ensures that the e2e latency of the PSFC is within the requirements of the SLA.
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\section{Proposed Algorithm}
+Our proposed solution is a two-step algorithm. We first use Algorithm.~\ref{bp} to find the PSFC structure for each request before mapping the VNFs of the PSFC to the network. We then use Algorithm.~\ref{psfc embed} to do the VNF mapping of each of the converted PSFC requests to the network topology.
+Before we start explaining the proposed solution in detail, Table.~\ref{table embed} describes the notations used in the algorithms. \\
+\begin{tabular}{|c|c|}\label{table embed}
+\textbf{Notations} & \textbf{Description} \\
+\hline
+$b_{x}^{i}$ & represents the $x^{th}$ branch\\
+$\thickspace$ & of $i^{th}$ PE \\
+\hline
+$b_{c}^{i}$ & represents the critical branch\\
+$\thickspace$ & of $i^{th}$ PE \\
+\hline
+$a$ & represents the index of the PE that has\\
+$\thickspace$ & more than one VNF\\
+\hline
+$n_{t}^{f_{k},b_{x}^{i}}$ & represents the node where the $t^{th}$ server\\
+$\thickspace$ & instance of the $k^{th}$ VNF in the\\
+$\thickspace$ & $x^{th}$ branch of $i^{th}$ PE\\
+\hline
+$X_{b_{x}, f_{k}}^{i}$ & represents the picked server instance of\\
+$\thickspace$ & the $k^{th}$ VNF of the $x^{th}$ branch \\
+$\thickspace$ & of the $i^{th}$ PE of the PSFC request \\
+\hline
+$l_{X_{b_{x}, f_{k}}^{i}, X_{b_{x'}, f_{k'}}^{i'}}$ & represents the links used between the\\
+$\thickspace$ & $k^{th}$ VNF of the $x^{th}$ branch of the $i^{th}$ PE \\
+$\thickspace$ & and the $k'^{th}$ VNF of the $x'^{th}$ branch\\
+$\thickspace$ & of the $i'^{th}$ PE. \\
+\hline
+\end{tabular}
+\subsection{Bin packing algorithm for PSFC structure}
+The goal of the Bin Packing problem is to identify an integer number of bins that minimizes the capacity left over after all the objects have been filled. The main goal of the parallelism optimization challenge is to coordinate the parallel branches' processing delays. This can be done by first ensuring the VNF processing delays across branches are similar. The links between the VNFs and the VNF instances themselves can then be chosen in such a way that the overall branch delay across branches remains similar. The selection of links and VNFs instances from the physical topology is done in the next step of the solution. Since Bin Packing is an NP-complete problem, we propose a greedy first-fit bin packing algorithm to find the structure of the PSFC. This algorithm was designed to address the two overheads caused due to parallelism. Packing functions into bins reduces the function processing delays between branches thus helping in co-ordinating the delay difference between branches to reduce packet deposition. The algorithm also tries to minimise the number of bins used, which translates to branches therefore reducing the degree of parallelism for that PE and causing a reduction in the number of packets copied/merged and thus reducing the end-to-end latency. As demonstrated in Algorithm.~\ref{bp}, let C be the set of PSFC requests that have to be embedded in the topology. For each request in the batch, we iterate through the PEs, and if the PE size is 1 then we directly add that PE to the request without any modification (line 7). For the PE whose size is greater than 1 (line 9), we set the function with the maximum processing delay as the bin capacity (line 10), add this function to a branch, and call this the critical branch and by doing so every critical branch will have only one function in it. (line 18 to 20)
+
+% Then, the remaining functions are added to a new bin till the capacity is filled. Once the capacity is filled, all the functions in the bin form a new branch, and this process continues until all the functions in the PE have been added to a branch. Since we are packing functions together in a branch, the overall degree of parallelism is smaller compared to full parallelism.
+
+Then, the remaining functions are added to an existing bin if the bin has enough capacity or a new bin is created and that function is added to the new bin. This process continues until all the functions in the PE have been added to a branch (line 12 to 22). Since we are packing functions together in a branch, the overall degree of parallelism is smaller compared to full parallelism.
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\KwData{\textbf{\textcolor{red}{$C$}}: a set of PSFC requests.}
+\KwResult{\textbf{\textcolor{OliveGreen}{$C'$}}: a set of transformed PSFC requests.}
+\Begin{
+$C' \gets \emptyset$\;
+\For{$c \in \textbf{\textcolor{red}{C}}$}{
+$c' \gets \emptyset$\;
+\For {each \texttt{PE} $\in c$}{
+ \If {$|\texttt{PE}|= 1$}{
+ $c' \leftarrow c' \cup \texttt{PE}$\;
+} \Else {
+$\texttt{Cap} \leftarrow \argmax_{f \in \texttt{PE}} t_f$\footnote{$t_f$ denotes the processing time of a function $f$.}\;
+$B \leftarrow \emptyset$\;
+\For{$f \in \texttt{PE}$}{
+\If{$\exists~\texttt{capable}~$\footnote{$b.$capacity$ < \texttt{Cap} - t_f$}$b \in B$}{
+$b \leftarrow b \cup f$\;
+$b.\texttt{capacity} \leftarrow b.\texttt{capacity} - t_f$\;
+} \Else {
+$b_{\texttt{new}} \leftarrow f$\;
+$b_{\texttt{new}}.\texttt{capacity} \leftarrow \texttt{Cap} - t_f$\;
+$B \leftarrow B \cup b_{\texttt{new}}$\;
+}
+}
+$c' \leftarrow c' \cup B$\;
+}
+}
+$C' \leftarrow C' \cup c'$\;
+}
+\KwRet \textbf{\textcolor{OliveGreen}{$C'$}}\;
+}
+\caption{$\mathrm{P}$\texttt{SFC\_}$\mathrm{S}$\texttt{truct}\label{bp}}
+\end{algorithm}
+
+% \begin{algorithm}
+% \caption{Bin Packing Algorithm for PSFC structure}\label{bp}
+
+% \textbf{Input}: $C$: a set of PSFC requests \\ 
+% \textbf{Output}: $C'$: a set of transformed PSFC requests  \\
+% \hrule
+% \begin{algorithmic}[1]
+% \State $C' \leftarrow \emptyset$ \\
+% \For{$c \in C$} %\Comment{c is one PSFC request}
+%     \State $c' \leftarrow \{\}$ \\
+%     \For {each $PE \in c$}
+%         \If {$\lVert PE \rVert = 1$}
+%             \State \text{Add PE to} $c'$ \\
+%         \Else
+%             \State $Cap \leftarrow \text{max processing function in PE}$
+%             % \State $Cap_{curr} \leftarrow 0$ \Comment{is the current capacity of bin}
+%             \State $b \leftarrow \{\}$  \Comment{Empty bin}
+%             \State $PE_{new} \leftarrow \{\}$ \\
+%             \For {$f \in PE$}
+%                 \If{Exists a bin that has enough capacity}
+%                     \State Find the bin $b$
+%                     \State $b \leftarrow f$ \\
+%                 \Else
+%                     \State Create a new bin $b'$ and add it to $PE_{new}$ \\
+%                     \State $b' \leftarrow f$ \\
+%                 \EndIf
+%                 % \If{$Cap_{curr} + f_{delay} \leq Cap$}
+%                 %     \State \text{pack f into b}
+%                 %     \State $Cap_{curr} \leftarrow Cap_{curr} + f_{delay}$
+                
+%                 % \Else
+%                 %     \State \text{Add b into} $PE_{new}$
+%                 %     \State $b \leftarrow \text{{}}$
+%                 %     \State $Cap_{left} \leftarrow 0$
+%                 % \EndIf
+%             \EndFor
+%             \State \text{Add} $PE_{new}$ \text{to} $c'$
+%         \EndIf    
+%     \EndFor
+%     \State \text{Add} $c'$ \text{to} $C'$
+% \EndFor
+% \State \textbf{return} $C'$
+% \end{algorithmic}
+% \end{algorithm}
+
+\subsection{VNF selection and routing algorithm}
+After running the bin packing algorithm, we have the structure of the PSFC, but we still must decide what server instances to pick and how to route the parallel traffic efficiently. \\ 
+To address this, we proposed a VNF selection and routing algorithm that simultaneously meets end-to-end latency constraints and minimizes the packet deposition problem by routing packets of non-critical branches such that the delay difference in the arrival of packets with respect to the critical branch is almost the same.
+Table.~\ref{table embed} summarizes the notation used to explain the VNF selection and routing algorithm. \\ As demonstrated in Algorithm.~\ref{psfc embed}, we first sort the optimized PSFC requests in ascending order based on arrival rates and start the selection process for each request one after the other. (line )  
+For each request $c$, we add the source and destination for that request at the beginning and end of the PSFC request, respectively. This implies that $PE_0$ and $PE_n$ are the source and destination of the request. We also pre-compute K shortest paths using Yen's algorithm between all source-destination pairs, which will later be used to create the Instance Assignment graph to pick server instances for VNFs in non-critical branches (line ). These K shortest paths are computed in such a way that every path has enough bandwidth to service the current request. These K shortest paths are recomputed for every request because once a request's VNFs and links have been selected, the resources of the network topology like each link's available bandwidth also changes. 
+The next step is to find the server instances $n_{t}^{f_{1},b_{c}^{i}}$ of the VNF in the critical branch of each PE. To ensure end-to-end latency constraint is met in most of the cases, we make sure that the server instances of the VNF in the critical branches are picked in such a way that a hop between server instances of the VNF in critical branches is always in the shortest possible delayed path with sufficient bandwidth to route the traffic. From the source we pick a server instance $n_{t}^{f_{1},b_{c}^{1}}$ which is closest to the source and has enough function processing resources to serve this request and assign this instance to $X_{b_{c}, f_{1}}^{1}$. We also assign all the links (with sufficient bandwidth) it takes to traverse from $X_{b_{c}, f_{1}}^{0}$ to $X_{b_{c}, f_{1}}^{1}$ and assign it to $l_{X_{b_{c}, f_{1}}^{0}, X_{b_{c}, f_{1}}^{1}}$. Now we continue doing the same VNF instance assignment for each function in the critical branch and end up assigning $X_{b_{c}^{i}, f_{1}}^{i}$ for all values of $i$ (line to ). Once this is done we have assigned server instances to all the VNFs in critical branches and hence have already computed the final e2e latency of the PSFC request. Now, we have to pick server instances for VNFs in non-critical branches in a way such that the branch delay with the critical branch is minimal. Since, we have assumed that there can only be one $i$ such that  $\lVert PE_i \rVert > 1$ for a given PSFC request, we have to worry about picking server instances for all VNFs belonging to non-critical branches of that respective PE. This is done by creating an Instance Assignment graph for each non-critical branch (line to ).
+\subsubsection{Instance Assignment Graph}
+This is a layer graph where the number of layers equals the number of VNFs in the non-critical branch. The $i_{th}$ layer consists of $n$ nodes where $n$ indicates the server instances from the physical topology where the $i_{th}$ VNF of the non-critical branch has been deployed. As seen in Algorithm.~\ref{inst graph}, each node in a given layer is connected to the each node in the next layer by $K$ number of edges and the edge cost of the $k^{th}$ edge is the $k^{th}$ shortest path from the given two nodes (these nodes represent the server instances from the physical topology) (line to ). The first layer has only one node which represents the picked VNF instance of the previous PE and the last layer will also have one node of the picked VNF instance of the next PE. Since, we restricted that only one PE can have multiple VNFs, the first and last layer's VNFs are the only functions in that PE and therefore are part of the critical branch of their respective PE (implies that the server instances for these VNFs have already been picked in the previous step of the algorithm) (line to ). Once this graph is set up, we run a simple DFS from the first layer's node to the last layer's node to find all possible paths (line to ). Recall that the K edges between two nodes in this layer graph are actually virtual links where the $k^{th}$ edge represents the $k^{th}$ shortest path. If this edge between the two nodes is picked then the incoming traffic is routed in the path whose delay came out to be this virtual link's cost. Finally, we return all the computed paths. 
+
+Now in Algorithm.~\ref{psfc embed}, once we get back all the paths from the function call to Algorithm.~\ref{inst graph} (line ), we compute the critical branch's delay, let's say, $t_c$. We then have to pick a path for the non-critical path whose delay $t_d$ is close to $t_c$, i.e, $\lVert t_c - t_d \rVert$ is minimum. Once the path has been picked, we then assign the server instances, which are the nodes in the selected path, to each $X_{b_{x}, f_{k}}^{i}$ and also add the links to $l_{X_{b_{x}, f_{k-1}}^{i}, X_{b_{x}, f_{k}}^{i}}$. This process of creating the instance assignment graph has to be done for every non-critical branch. We always try to ensure that $t_d < t_c$ but in the case that the minimum delay difference occurs when $t_d > t_c$, then we just add the difference, which is $t_d - t_c$ to the final e2e latency as the critical branch has changed (line to ). However, we still use the original critical branch to minimize the delay difference between the other branches. Note that the final e2e latency is only affected by the largest delay branch, so if a couple of non-critical branches select paths that cause their branch delays to be higher than the critical branch, then the final e2e latency is added by the difference between the maximum delay of those non-critical branches and the critical branch. Finally, if the server instances for all the VNFs in the PSFC has been selected, we then update the network state (line ).\\
+
+Now see Fig.~\ref{toy topology}-~\ref{l_graph} which provides an illustrative example of the selection of VNF instances of the PSFC request shown in Fig.~\ref{PSFC request}. \textit{The $t$ variable above every VNF indicates the time at which the incoming packet will leave that server instance.} In this example, there were five VNFs that were deployed in the topology as seen in Fig.~\ref{toy topology}. The packet duplication/merge delay was taken to be 2 ms. The VNF processing delay for $f_1, f_2, f_3, f_4 \text{ and } f_5$ are 70 ms, 50 ms, 30 ms, 100 ms, and 40 ms, respectively. Finally, K in K shortest paths was picked to be 2. As seen in Fig.~\ref{PSFC request}, the red dotted line shows the picking of the server instances for the VNFs in the critical branch of every PE, which is the first step followed in Algorithm.~\ref{psfc embed}. The $t$ variable alongside every VNF tells the time at which the packet leaves that server instance. We can see that the variable $t_1$ above the destination node is the e2e latency of the PSFC request which is 251 ms. If this value exceeds the e2e latency requirement constraint, the request is rejected. To pick the server instances of the VNFs in the non-critical branches, we construct the instance assignment graph as shown in Fig.~\ref{l_graph}. We see that each node in one layer is connected to the next layer by 2 edges since we picked K to be 2. The first layer and last layer have server instances of $f_1$ and $f_5$, respectively, which have already been picked. Hence these layers have only one node. The critical branch delay comes out to be 124 ms (17 ms + 100 ms + 7 ms). Now, the delay of the path ($n_{1a} \xrightarrow[]{22 ms} n_{2a} \xrightarrow[]{25 ms} n_{3a} \xrightarrow[]{0 ms} n_{5a}$) is the closest to the critical branch at 125 ms. Hence, we can see that the variable $t_2$ above the destination shows 252 ms as the difference of 125 ms and 124 ms was added to the previous e2e latency value and this new value becomes the final e2e latency of the request. Note that if this added difference makes the e2e latency cross the requirement then we pick a different path whose delay is the next closest to the critical branch.\\
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\KwData{\{\textbf{\textcolor{red}{$G$}}, \textbf{\textcolor{red}{$C$}}, \} where $G_{\texttt{topo}}(\cdot, \cdot, \cdot)$ denotes the resource-endowed constrained topology and $\Gamma(\cdot, \cdot)$, the SFP. }
+\KwResult{\textbf{\textcolor{OliveGreen}{$C'$}}: a set of transformed PSFC requests.}
+\Begin{
+$C' \gets \emptyset$\;
+\For{$c \in \textbf{\textcolor{red}{C}}$}{
+$c' \gets \emptyset$\;
+\For {each \texttt{PE} $\in c$}{
+ \If {$|\texttt{PE}|= 1$}{
+ $c' \leftarrow c' \cup \texttt{PE}$\;
+} \Else {
+$\texttt{Cap} \leftarrow \argmax_{f \in \texttt{PE}} t_f$\footnote{$t_f$ denotes the processing time of a function $f$.}\;
+$B \leftarrow \emptyset$\;
+\For{$f \in \texttt{PE}$}{
+\If{$\exists~\texttt{capable}~$\footnote{$b.$capacity$ < \texttt{Cap} - t_f$}$b \in B$}{
+$b \leftarrow b \cup f$\;
+$b.\texttt{capacity} \leftarrow b.\texttt{capacity} - t_f$\;
+} \Else {
+$b_{\texttt{new}} \leftarrow f$\;
+$b_{\texttt{new}}.\texttt{capacity} \leftarrow \texttt{Cap} - t_f$\;
+$B \leftarrow B \cup b_{\texttt{new}}$\;
+}
+}
+$c' \leftarrow c' \cup B$\;
+}
+}
+$C' \leftarrow C' \cup c'$\;
+}
+\KwRet \textbf{\textcolor{OliveGreen}{$C'$}}\;
+}
+\caption{$\mathrm{R}$\texttt{OUTE\_}$\mathrm{V}$\texttt{NF}\label{psfc embed}}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{$\mathrm{R}$\texttt{OUTE\_}$\mathrm{V}$\texttt{NF}}\label{psfc embed}
+\textbf{Input}: $G$, $C$, $n$, $\mu$\\
+\hrule
+\begin{algorithmic}[1]
+\State C $\leftarrow$ Algorithm.~\ref{bp}
+\State sort the bin transformed $C$ in ascending order of average arrival rates \\
+\For{$c \in C$}{
+    \State compute k shortest paths with sufficient bandwidth for all src-dest pairs and store in paths[src][dest][k]. \\
+    $t_{e2e} \leftarrow 0$ \\
+    \For{$PE_{i} \in c$}{
+        pick $n_{t}^{f_{1},b_{c}^{i}}$ s.t it is closest to $X_{b_{c}, f_{1}}^{i-1}$.\\ Ensure the links in the path have sufficient bandwidth else pick a new instance.\\
+        Add the links in the shortest paths to $l_{X_{b_{c}, f_{1}}^{i-1}, X_{b_{c}, f_{1}}^{i}}$.\\
+        \State Assign VNF instance to $X_{b_{c}, f_{1}}^{i} \leftarrow n_{t}^{f_{1},b_{c}^{i}}$\\
+        \State $t_{e2e} \leftarrow t_{e2e} + \sum l_{X_{b_{c}, f_{1}}^{i-1}, X_{b_{c}, f_{1}}^{i}} + f_{b_c,1}^i$\\
+    }
+    \State $t_{e2e} \leftarrow t_{e2e} + \lVert PE_a \rVert*(COPY+MERGE) \\$
+    \If{$t_{e2e} < T_l$}{
+        \For{$b \in PE_a$}{
+            \If{$b = b_c$}{
+                \State \textbf{continue}
+            }
+            \State inst\_paths $\leftarrow$ call Algorithm.~\ref{inst graph} \\
+            \State $t_c \leftarrow \sum l_{X_{b_{c}, f_{1}}^{a-1}, X_{b_{c}, f_{1}}^{a}} + f_{b_c,1}^a + \sum l_{X_{b_{c}, f_{1}}^{a}, X_{b_{c}, f_{1}}^{a+1}}$ \\
+            \For{inst\_path $\in$ inst\_paths}{
+                $t \leftarrow$ time taken in inst\_path
+                Find $t$ s.t $\lVert t_c - t \rVert$ is minimum and if $ t_c - t > 0$ then select inst\_path only if $t_{e2e} + t_c - t < T_l$ 
+            }
+        }
+    }
+    Update the network state which includes the VNF capacity ($\mu$) and the bandwidth of the links used.\\
+}
+\KwRet \textbf{\textcolor{OliveGreen}{$C'$}}\;
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Instance Assignment graph}\label{inst graph}
+\textbf{Input}: $G$,$c$,$b_{curr}$\\
+\hrule
+\begin{algorithmic}[1]
+    \State src $\leftarrow$ $X^{a-1}_{b_1,f_1}$
+    \State dest $\leftarrow$ $X^{a+1}_{b_1,f_1}$
+    \State inst\_graph $\leftarrow$ $\emptyset$
+    \State connect src to each VNF instance of the $1^{st}$ VNF in $PE_a$ using K links that indicate the K shortest paths and add to inst\_graph.
+    \For{$b \in PE_a$}{
+        \If{$b = b_{curr}$}{
+            \For{each server instance of VNF}{
+                \State connect the server instance to each of the next VNF's server instance using the K links and add them to the inst\_graph.
+            }
+        }
+    }
+    \State Connect each of the last VNF's server instances to the dest using the K links and add them to the inst\_graph.p
+    \State inst\_paths $\leftarrow \emptyset$
+    \State Perform a DFS on inst\_graph from src to dest s.t that all links are traversed to get all possible paths and store them in inst\_paths.    
+    \State \textbf{return} inst\_paths
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 9.png}
+\caption{Small topology with VNFs deployed}
+\label{toy topology}
+\vspace{0.4cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 12.png}
+\caption{Instance assignment flow of the VNFs in PSFC request}
+\label{PSFC request}
+\vspace{0.4cm}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 14.png}
+\caption{Instance assignment graph}
+\label{l_graph}
+\vspace{0.4cm}
+\end{figure}
+
+\subsection{Complexity Analysis}
+The proposed solution is divided into two algorithms: the bin packing algorithm to find the structure of PSFC and the VNF selection and routing algorithm to pick VNF instances from the topology and efficiently route the packets.\\
+If we take F to be the set of VNFs in the PSFC, then the time complexity of the greedy bin packing algorithm is O($\lVert F \rVert$).\\
+For the VNF selection and routing algorithm, if we take F as the number of VNFs in the PSFC ,P as the number of VNFs in a PE whose $\lVert PE \rVert > 1$, N be the nodes and M be the edges in the network topology. The complexity of finding K shortest paths using Yen's algorithm is O(K*N(M + N*logN)). We use this algorithm to find K shortest path for all source-destination pairs so the complexity becomes O(K*$N^3$(M + N*logN)). The complexity of the first step is O($\lVert F \rVert$*N) as each VNF in the critical path can be in at most N nodes, and the complexity of finding the closest node is O(N). The second step involves creating a layer graph for the P VNFs and each of these VNFs can be in at most N nodes and each node in a layer is connected to every node in the next layer by K links. There will be a total of atmost N*$K^{p+2}$. Although this looks like an exponential algorithm, the value of p usually doesn't exceed the size of the PSFC which is around 3 to 8. So the time complexity doesn't actually become exponential.\\ The overall time complexity of the algorithm is O($\lVert F \rVert$ + K*$N^3$(M + N*logN) + $\lVert F \rVert$*N + N*$K^{p+2}$).\\
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+\textbf{FIX FIG 10.....20ms to 22ms}
+
+
+\section{Performance Evaluation}
+\subsection{Experiment Setup}
+In this section, simulation experiments are presented to evaluate the proposed heuristic solution. The proposed solution was first tested against the ILP solution on a small topology to see how close to optimal were we doing. In a medium and large topology setup, our solution was tested against two greedy solutions namely, SPA and FPA for comparison purposes. The entire simulation was done in a C++ environment.
+\begin{itemize}
+   \item \textbf{PDA:} This is our proposed solution.
+   \item \textbf{ILP}: This is the solution obtained from solving the ILP formulation presented in Section IV using a CPLEX solver.
+    \item \textbf{SPA:} Shortest Path Algorithm (SPA) is a greedy algorithm that always tries to go from one node to another in the shortest possible path (most existing solutions do this). It also uses the bin packing algorithm to convert the PSFC structure.
+    \item \textbf{FPA:} Full Parallelism Algorithm (FPA) is a greedy algorithm that abuses full parallelism as well as always travels in the shortest path from one node to another.
+\end{itemize}
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\subsubsection{Network Setup}
+We evaluate our proposed solution with the ILP on a small topology of 7 nodes and 10 edges as seen in Fig.~\ref{small topology}. 
+\begin{figure}[!htb]
+\centering
+%\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+\includegraphics[width=\linewidth, keepaspectratio]{Images/Frame 9.png}
+\caption{Small topology}
+\label{small topology}
+\vspace{0.4cm}
+\end{figure}
+The proposed solution and the other two greedy algorithms are compared on a medium and large topology namely, the NSFNET topology of 14 nodes and 21 edges as seen in Fig.~\ref{NSFNET} and the USNET topology of 24 nodes and 43 edges as seen in Fig.~\ref{USNET}.
+
+\begin{figure}[!htb]
+\centering
+\subfloat[NSFNET Topology \label{NSFNET}]{%
+  \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/NSFNET.png}}
+  \subfloat[USNET Topology \label{USNET}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/usnet.eps}}\hfill\newline
+    \vspace{0.2cm}
+    \caption{Network topologies used in the study.}
+\label{fig_load_eval}
+\vspace{0.4cm}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{figure}[t]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/USPNET.jpg}
+% \caption{USPNET topology}
+% \label{USPNET}
+% \vspace{-0.2cm}
+% \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For the medium and large topology, VNFs were randomly picked from a unique range of 1-10 and deployed randomly on the VMs running on the servers of the topology. The processing capacity of each VM was fixed at 5 Gbps, and the maximum number of VMs that could be run in one server was 4. The links delays were randomly picked from a range of 4-8 ms, and the bandwidth of each link was selected from a range of 20-30 Gbps unless mentioned otherwise. The packet duplication/merge delay was set at 4ms.
+\subsubsection{VNF Setup}
+There were a total of 10 unique VNFs that were used to generate the PSFCs. The processing delays of each VNF were randomly set from a range of 1-20 ms. The length of the PSFC was fixed at six unless mentioned otherwise, and each PSFC had all unique VNFs in them. In each PSFC, there was only one PE with more than one VNF and the number of VNFs that were in that PE was randomly picked from two to the size of the PSFC. The average arrival rate of each PSFC was randomly picked from a range of 1-1.5 Gbps and the end-to-end latency constraint for each PSFC was selected from a range of 140-180 ms. Table.~\ref{param} summarizes the parameters used while executing the simulations.
+
+\begin{tabular}{|l|l|}\label{param table}\\
+\hline
+\textbf{Parameters} & \textbf{Values} \\
+\hline
+Number of VMs per node & [1-4] \\
+\hline
+VM processing capacity & 5 Gbps \\
+\hline
+Number of unique VNFs & 10 \\
+\hline
+Link delays & [4-8] ms \\
+\hline
+Bandwidth of each link & [20-30] Gbps \\
+\hline
+Average arrival rate of request & [1-1.5] Gbps \\
+\hline
+SFC length & [4-8] \\
+\hline
+e2e delay requirements & [140-180] ms \\
+\hline 
+copy/merge delay & 4 ms \\
+\hline
+\end{tabular}
+\subsection{Evaluation Metrics}
+Both the proposed solution and the comparison algorithms were evaluated
+in terms of the total SFC delay, additional cache memory required to store packets before merging in parallel branches, service acceptance rate, and network bandwidth consumption.
+These metrics were defined as follows.
+\begin{itemize}
+    \item \textbf{SFC Delay:} The SFC delay includes the VNF processing delays,
+link delays, and packet duplication/merge delays as well
+    \item \textbf{Packet Deposition:} This metric talks about the additional memory required to cache early coming packets in parallel branches before merging them. This value is calculated by multiplying the average arrival rate of the packet with the summation of the delay difference between the critical branch with the non-critical branches.
+    \item \textbf{Service Acceptance Ratio:} The service acceptance ratio
+indicates the serving capability of an algorithm. The
+service acceptance ratio is defined as the proportion of
+PSFC requests that have been successfully embedded in the network to the total amount of PSFC
+requests.
+    \item \textbf{Normalized Bandwidth Consumption:} This metric measures the ratio of the total bandwidth utilized in all links to embed all the PSFC requests to the total bandwidth available in the network.
+\end{itemize}
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+\subsection{Simulation Results for small topology}
+To evaluate the effectiveness of our proposed heuristic, it is crucial to analyze its performance in relation to the optimal solution (obtained by solving the ILP using the IBM CPLEX optimizer). By comparing the outputs generated by our heuristic algorithm with the ILP, we can determine how much our approach approximates the optimal solution.
+
+In the following section, we present our evaluation's primary results, highlighting our heuristic's proximity to the ILP and its overall performance in solving the given problem on a small topology.
+We then compare the proposed solution with the other two greedy algorithms for a medium and large topology and explain how our solution outperforms the greedy solutions based on the results obtained. Since the ILP cannot be solved in polynomial time, we do not present the results for it in the medium and large topologies. \\
+
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{ilp_lat_length}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_Mean_latency_vs_SFC_length.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{ilp_pd_length}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_PD_vs_SFC_length.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{ilp_bw_length}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_BW_vs_SFC_length.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{ilp_ar_length}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_AR_vs_SFC_length.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results of ILP and proposed solution w.r.t varying number of PSFC length of \emph{small} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{ilp_lat_request}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_Mean_latency_vs_num_of_requests.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{ilp_pd_request}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_PD_vs_num_of_requests.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{ilp_bw_request}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_BW_vs_num_of_requests.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{ilp_ar_request}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_AR_vs_num_of_requests.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results of ILP and proposed solution w.r.t varying number of PSFC requests of \emph{small} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\subfloat[Execution Time \label{ilp_run_length}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_Runtime_vs_SFC_length.pdf}}
+   % \hfill
+\subfloat[Execution Time\label{ilp_run_request}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/ILP/ILP_Runtime_vs_num_of_requests.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+   \newline
+   \newline
+  \caption{Simulation results of ILP and proposed solution w.r.t execution time of \emph{small} network topology.}
+\end{figure*}
+
+We compare the two algorithms by varying the PSFC length, number of requests, and the packet copy/merge delay. We use only a small batch of requests due to the exponential time taken by the ILP to solve. The network setup is similar to the setup for the medium and large topology as seen in Table.~\ref{param table} except that the number of unique VNFs is only 5, the e2e delay requirements vary from [100-120], and the number of parallel VNFs in a PE whose $\lVert PE \rVert > 1$  is only 2.  We kept this constraint on the number of parallel VNFs in a PE because as we increased this number, the ILP was taking extremely long durations to solve the problem. We also use the PSFC length as 4 and the number of requests as 5 unless mentioned otherwise.
+
+\subsubsection{Impact of PSFC length}
+As we increase the SFC length, the mean latency increases as expected, but we also observe that the proposed heuristic only deviates 2.7-3.5 \% away from the ILP as seen in Fig.~\ref{ilp_lat_length}. This shows that the heuristic minimizes the packet duplication/merge cost to reduce the overall latency. We also observe an 18.6 \% deviation from the ILP in the heuristic regarding packet deposition as seen in Fig.~\ref{ilp_pd_length}. This further solidifies the closeness of the heuristic solution to the optimal. Now, regarding bandwidth, the ILP uses more simply because more links must be used to reduce the packet deposition, as stated before, and this is a simple trade-off that must be made. Also, note that the acceptance ratio of the ILP is lower than the heuristic because the ILP formulated embeds a single PSFC and not a batch optimally. Therefore, when embedding the PSFCs one by one in an optimal way to minimize the objective, more resources will be used, thus not allowing all requests to be embedded.
+
+\subsubsection{Impact of number of PSFC requests}
+The mean latency and packet deposition remain almost the same as the number of requests increases and this is an expected behavior as the PSFC length is fixed at 4. The heuristic deviates 2.5-4.4 \% from the optimal in regard to mean latency and 26.2 \% in packet deposition. Whereas when it comes to bandwidth, as the number of requests increases more bandwidth is used and this is because more network resources have to be used to embed increasing requests. Again, the ILP uses more bandwidth as compared to the heuristic so as to minimize packet deposition. The acceptance ratio drops as the number of requests increases because the network may not have sufficient resources to embed all the requests in a small topology as the number increases.
+
+\subsubsection{Impact of packet copy/merge cost}
+The mean latency observed in the heuristic is very close to the ILP solution. The heuristic only deviates 2.8 \% from the optimal. The ILP tries all possible PSFC structures and picks the one that reduces the copy/merge overhead and since our solution uses a heuristic bin packing algorithm to reduce the overhead and performs very close to the ILP we can say that our solution is an ideal one. As expected, the mean latency increases with an increase in packet copy/merge cost due to the added packet copy/merge overhead as explained in the previous sections. The rest of the trends are as expected and due to space constraints, we haven't included them.
+
+\subsubsection{Execution time}
+The problem with the ILP is that for a small topology and $\lVert PE \rVert$ $\leq$ 2 itself the execution time was more than 10 times the heuristic and this will exponentially increase as we increase the topology and |PE| size. We can see from Fig.~\ref{ilp_run_length} and Fig.~\ref{ilp_run_request} how much better the heuristic execution time is as compared to the ILP.
+
+From this, we can conclude that our proposed solution performs close to the optimal solution, and for this reason, it is an excellent choice. We will now analyze the results for the medium and large topology of the proposed algorithm with two greedy algorithms namely SPA and FPA as stated above.
+
+\subsection{Simulation Results for medium and large topology}
+
+\subsubsection{Impact of PSFC length}
+We observe that as we increase the PSFC length, overall e2e latency increases similarly in both the topologies which is the expected behavior. Our proposed solution, in NSFNET and USNET, does 7.83\% and 8.9\% (at SFC length 8) lower than SPA respectively, and 11.8\% and 12.46\% (at SFC length 8) lower than FPA respectively in terms of latency as seen in Fig.~\ref{fig:ns_lat_len} and Fig.~\ref{fig:us_lat_len}. From Fig.~\ref{fig:ns_pd_len} and Fig.~\ref{fig:us_pd_len} we can see that our solution has significantly lower packet deposition as compared to SPA and FPA because we route the packets in such a way that we can minimize the delay difference of concurrent packets. In terms of packet deposition, we do 67.94\% (NSFNET) and 71.2\% (USNET) lower than SPA and, 75\% (NSFNET) and 77.84\% (USNET) lower than FPA at SFC length 8. From these results, we can conclude that going in the shortest paths to route packets doesn't always guarantee lower latency since our solution does better than SPA in terms of latency and outperforms SPA in packet deposition. The tradeoff that must be done is the additional utilization of bandwidth in our solution as seen in Fig.~\ref{fig:ns_bw_len} and Fig.~\ref{fig:us_bw_len} due to the utilization of extra links to reduce the delay difference between branches in a PE. When it comes to bandwidth, our solution uses 7.3\% (NSFNET) and 8.534\% (USNET) more than SPA and 3.57\% (NSFNET) and 6.94\% (USNET) more than FPA at SFC length 8. In Fig.~\ref{fig:ns_ar_len} and Fig.~\ref{fig:us_ar_len} we can see that our solution has a higher acceptance ratio as compared to SPA and FPA because we achieve lower e2e latency therefore are able to meet e2e latency constraints better as compared to the other greedy algorithms. We accept 1\% (NSFNET) and 2.3\% (USNET) more than SPA and 2.83\% (NSFNET) and 10.5\% (USNET) more than FPA at SFC length 8. In the medium topology, the acceptance ratio is lesser than in the large topology because of fewer resources so fewer requests can be embedded in the medium topology as seen from Fig.~\ref{fig:ns_ar_len} and Fig.~\ref{fig:us_ar_len}. Also, the overall percentage bandwidth utilization of the network is higher for the medium topology because, for the same number of requests, the medium topology has fewer links so the overall percentage utilization will be higher however the pattern observed is similar in both the topologies.
+
+\subsubsection{Impact of number of PSFC requests}
+We can see that as we increase the number of requests the e2e latency and packet deposition remains similar for both the topologies. From Fig.~\ref{fig:ns_lat_req} and Fig.~\ref{fig:us_lat_req} we can see that our solution does 4.3\% (NSFNET) and 5.6\% (USNET) lower than SPA and 7.2\% (NSFNET) and 8.2\% (USNET) lower than FPA in terms of latency at 30 requests. In terms of packet deposition, from Fig.~\ref{fig:ns_pd_req} and Fig.~\ref{fig:us_pd_req} our solution does 54.45\% (NSFNET) and 61.6\% (USNET) lower than SPA and 65.72\% (NSFNET) and 68.82\%(USNET) lower than FPA at 30 requests. The bandwidth utilized increases as we increase the number of requests as more links have to be used to embed more requests.From Fig.~\ref{fig:ns_bw_req} and Fig.~\ref{fig:us_bw_req}, our solution uses 2.8\% (NSFNET) and 6.3\% (USNET) more bandwidth than SPA and 0.6\% (NSFNET) and 1.4\% (USNET) more bandwidth than FPA. When it comes to the acceptance ratio, from Fig.~\ref{fig:ns_ar_req} and Fig.~\ref{fig:us_ar_req} we can see that there is a decline as requests increase and this is due to the fact that enough resources might not be available to embed larger batches of requests. Also, observe that the acceptance ratio of the medium topology is lower compared to the large topology because of the lower resource capacity of the network hence same number of requests cannot be embedded in both topologies.
+
+\subsubsection{Impact of packet copy/merge cost}
+We see that in Fig.~\ref{fig:ns_lat_pkt} and Fig.~\ref{fig:us_lat_pkt} the e2e latency rises in both the topologies as we increase the packet copy/merge delay. This is due to the fact that in PE whose $\lVert PE \rVert > 1$ packets have to be duplicated before sending them to be processed by VNFs concurrently and these packets have to be merged as well so the packet duplication and merging delay gets added to the overall e2e latency. There is a significant rise of 11.23\% (NSFNET) and 10.3\% (USNET) in latency in FPA as compared to our proposed solution and a rise of 7.7\% (NSFNET) and 8.32\% (USNET) in SPA at 10 ms copy/merge delay because FPA uses full parallelism meaning all the VNFs in the PE are run concurrently causing more duplication/merge delays. This increase in delay can be reflected in the acceptance ratio as seen in Fig.~\ref{fig:ns_ar_pkt} and Fig.~\ref{fig:us_ar_pkt}. In NSFNET, there is a drop of 18.5\%,16.5\%, and 35.3\% and in USNET, there is a drop of 33.83\%, 42.17\%, and 62\% in acceptance ratio in our solution, SPA and FPA respectively when the packet copy/merge delay changes from 2ms to 16ms. The acceptance ratio drops as we increase the packet copy/merge delay due to an increase in e2e latency and this will increase the probability of requests failing to meet the e2e latency constraint. However, the drop is significantly steep in the case of FPA as FPA does the maximum possible packet copy and merges possible. Therefore, always exploiting full parallelism is not an ideal approach. Our proposed solution and SPA does better due to the bin-packing algorithm that converts the PSFC to a structure that avoids full parallelism.
+
+\subsubsection{Impact of bandwidth range of links}
+Here we try to showcase the importance of bandwidth requirements for our proposed solution. Our solution requires more bandwidth in order to reduce the packet deposition overhead and this pattern was observed even in the optimal solution (ILP) in Fig.~\ref{ilp_bw_length} and Fig.~\ref{ilp_bw_request}. In Fig.~\ref{fig:us_ar_bw}, we can see that initially when the bandwidth range of links was low, the acceptance ratio of our solution is the least, but as we kept increasing the bandwidth range, we saw an increase in the acceptance ratio and our solution was able to do better compared to SPA and FPA. So, having sufficient bandwidth in the network is an important factor in order to minimize the packet deposition overhead and this tradeoff has to be made. When it comes to the packet copy/merge overhead it doesn't depend on the bandwidth as seen in Fig.~\ref{fig:us_lat_bw}, our solution does better in latency compared to SPA and FPA and the values of the latency remain similar even with varying bandwidth range.
+% \begin{figure}[!htb]
+%     \begin{subfigure}{0.25\textwidth}
+%             \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_num_of_requests.pdf}
+%         \caption{Full Parallelism}
+%         \label{Fig 1 a}
+%     \end{subfigure}
+    
+%     \begin{subfigure}{0.25\textwidth}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_num_of_requests.pdf}
+%             \caption{Partial Parallelism}
+%         \label{Fig 1 b}
+%     \end{subfigure}
+    
+%     \begin{subfigure}{0.25\textwidth}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_num_of_requests.pdf}
+%             \caption{Another Partial Parallelism}
+%         \label{Fig 1 c}
+%     \end{subfigure}
+    
+%     \begin{subfigure}{0.25\textwidth}
+%         \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_num_of_requests.pdf}
+%             \caption{Partial Parallelism but with different routing}
+%         \label{Fig 1 d}
+%     \end{subfigure}
+%         \caption{Observations 1}
+% \end{figure}
+
+%SFC length
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:ns_lat_len}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/Mean_latency_vs_SFC_length.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:ns_pd_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/PD_vs_SFC_length.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{fig:ns_bw_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/BW_vs_SFC_length.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:ns_ar_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/AR_vs_SFC_length.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying PSFC length of \emph{NSFNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:us_lat_len}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_SFC_length.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:us_pd_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_SFC_length.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{fig:us_bw_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_SFC_length.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:us_ar_len}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_SFC_length.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying PSFC length of \emph{USNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+%number of requests
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:ns_lat_req}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/Mean_latency_vs_num_of_requests.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:ns_pd_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/PD_vs_num_of_requests.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{fig:ns_bw_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/BW_vs_num_of_requests.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:ns_ar_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/AR_vs_num_of_requests.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying number of PSFC requests of \emph{NSFNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:us_lat_req}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_num_of_requests.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:us_pd_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_num_of_requests.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{fig:us_bw_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_num_of_requests.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:us_ar_req}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_num_of_requests.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying number of PSFC requests of \emph{USNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%pkt copy/merge
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:ns_lat_pkt}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/Mean_latency_vs_pkt_cost.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:ns_pd_pkt}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/PD_vs_pkt_cost.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:ns_ar_pkt}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/NSFNET/AR_vs_pkt_cost.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying the packet copy/merge delay of \emph{NSFNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:us_lat_pkt}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_pkt_cost.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:us_pd_pkt}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_pkt_cost.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:us_ar_pkt}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_pkt_cost.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying the packet copy/merge delay of \emph{USNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%bw
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t]
+\centering
+\subfloat[Mean Latency \label{fig:us_lat_bw}]{%
+   \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_BW.pdf}}
+   % \hfill
+\subfloat[Packet deposition\label{fig:us_pd_bw}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_BW.pdf}}
+%     \hfill
+% \subfloat[Total energy consumption \label{fig:psfc_energy}]{%
+%     \includegraphics[width=0.33\linewidth, keepaspectratio]{energy_used_vs_num_of_requests_3.pdf}}
+   % \hfill
+     \newline
+    \newline
+   % \newline
+   % \newline
+    \centering
+    \subfloat[Bandwidth consumption \label{fig:us_bw_bw}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_BW.pdf}}
+   % \hfill
+    \subfloat[Acceptance ratio \label{fig:us_ar_bw}]{%
+    \includegraphics[width=0.45\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_BW.pdf}}
+  %  \hfill
+    \vspace{0.6cm}
+  \caption{Simulation results w.r.t varying the bandwidth range of \emph{USNET} network topology.}
+\label{fig:psfc_req}
+%\vspace{0.3cm}
+%\vspace{-0.2cm}
+\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{figure}[t]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_num_of_requests.pdf}
+% \caption{USNET: Mean Latency vs PSFC requests}
+% \label{latency vs requests}
+% \vspace{0.4cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_num_of_requests.pdf}
+% \caption{USNET: Packet deposition vs PSFC requests}
+% \label{PD vs requests}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_num_of_requests.pdf}
+% \caption{USNET: Bandwidth consumption vs PSFC requests}
+% \label{BW vs requests}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_num_of_requests.pdf}
+% \caption{USNET: Acceptance ratio vs PSFC requests}
+% \label{AR vs requests}
+% \vspace{0.3cm}
+% \end{figure}
+% % needed in second column of first page if using \IEEEpubid
+% %\IEEEpubidadjcol
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%SFC length
+% \begin{figure}[t]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_SFC_length.pdf}
+% \caption{USNET: Mean Latency vs PSFC length}
+% \label{latency vs SFC length}
+% \vspace{0.4cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_SFC_length.pdf}
+% \caption{USNET: Packet deposition vs PSFC length}
+% \label{PD vs SFC length}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_SFC_length.pdf}
+% \caption{USNET: Banwidth consumption vs PSFC length}
+% \label{BW vs SFC length}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_SFC_length.pdf}
+% \caption{USNET: Acceptance ratio vs PSFC length}
+% \label{AR vs SFC length}
+% \vspace{0.3cm}
+% \end{figure}
+
+% %packet copy/merge
+% \begin{figure}[t]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_pkt_cost.pdf}
+% \caption{USNET: Mean Latency vs Packet copy/merge delay}
+% \label{latency vs Packet copy/merge delay}
+% \vspace{0.4cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_pkt_cost.pdf}
+% \caption{USNET: Packet deposition vs Packet copy/merge delay}
+% \label{PD vs Packet copy/merge delay}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_pkt_cost.pdf}
+% \caption{USNET: Acceptance ratio vs Packet copy/merge delay}
+% \label{AR vs Packet copy/merge delay}
+% \vspace{0.3cm}
+% \end{figure}
+
+% %BW range
+% \begin{figure}[t]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/Mean_latency_vs_BW.pdf}
+% \caption{USNET: Mean Latency vs Link bandwidth range}
+% \label{latency vs Link bandwidth range}
+% \vspace{0.4cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/PD_vs_BW.pdf}
+% \caption{USNET: Packet deposition vs Link bandwidth range}
+% \label{PD vs Link bandwidth range}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/BW_vs_BW.pdf}
+% \caption{USNET: Banwidth consumption vs Link bandwidth range}
+% \label{BW vs Link bandwidth range}
+% \vspace{0.3cm}
+% \end{figure}
+
+% \begin{figure}[!htb]
+% \centering
+% %\includegraphics[width=\linewidth, keepaspectratio]{parallelSFC.png}
+% \includegraphics[width=\linewidth, keepaspectratio]{Images/Results/USNET/AR_vs_BW.pdf}
+% \caption{USNET: Acceptance ratio vs Link bandwidth range}
+% \label{AR vs Link bandwidth range}
+% \vspace{0.3cm}
+% \end{figure}
+
+% An example of a floating figure using the graphicx package.
+% Note that \label must occur AFTER (or within) \caption.
+% For figures, \caption should occur after the \includegraphics.
+% Note that IEEEtran v1.7 and later has special internal code that
+% is designed to preserve the operation of \label within \caption
+% even when the captionsoff option is in effect. However, because
+% of issues like this, it may be the safest practice to put all your
+% \label just after \caption rather than within \caption{}.
+%
+% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
+% option should be used if it is desired that the figures are to be
+% displayed while in draft mode.
+%
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=2.5in]{myfigure}
+% where an .eps filename suffix will be assumed under latex, 
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure}
+
+% Note that the IEEE typically puts floats only at the top, even when this
+% results in a large percentage of a column being occupied by floats.
+
+
+% An example of a double column floating figure using two subfigures.
+% (The subfig.sty package must be loaded for this to work.)
+% The subfigure \label commands are set within each subfloat command,
+% and the \label for the overall figure must come after \caption.
+% \hfil is used as a separator to get equal spacing.
+% Watch out that the combined width of all the subfigures on a 
+% line do not exceed the text width or a line break will occur.
+%
+%\begin{figure*}[!t]
+%\centering
+%\subfloat[Case I]{\includegraphics[width=2.5in]{box}%
+%\label{fig_first_case}}
+%\hfil
+%\subfloat[Case II]{\includegraphics[width=2.5in]{box}%
+%\label{fig_second_case}}
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure*}
+%
+% Note that often IEEE papers with subfigures do not employ subfigure
+% captions (using the optional argument to \subfloat[]), but instead will
+% reference/describe all of them (a), (b), etc., within the main caption.
+% Be aware that for subfig.sty to generate the (a), (b), etc., subfigure
+% labels, the optional argument to \subfloat must be present. If a
+% subcaption is not desired, just leave its contents blank,
+% e.g., \subfloat[].
+
+
+% An example of a floating table. Note that, for IEEE style tables, the
+% \caption command should come BEFORE the table and, given that table
+% captions serve much like titles, are usually capitalized except for words
+% such as a, an, and, as, at, but, by, for, in, nor, of, on, or, the, to
+% and up, which are usually not capitalized unless they are the first or
+% last word of the caption. Table text will default to \footnotesize as
+% the IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+%\begin{table}[!t]
+%% increase table row spacing, adjust to taste
+%\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+%\caption{An Example of a Table}
+%\label{table_example}
+%\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{table}
+
+
+% Note that the IEEE does not put floats in the very first column
+% - or typically anywhere on the first page for that matter. Also,
+% in-text middle ("here") positioning is typically not used, but it
+% is allowed and encouraged for Computer Society conferences (but
+% not Computer Society journals). Most IEEE journals/conferences use
+% top floats exclusively. 
+% Note that, LaTeX2e, unlike IEEE journals/conferences, places
+% footnotes above bottom floats. This can be corrected via the
+% \fnbelowfloat command of the stfloats package.
+
+
+
+
+\section{Conclusion}
+In this paper, we focussed on mitigating the overheads such as packet copy/merge cost and packet deposition caused due to parallelism of SFCs. We provided illustrative examples to help explain the importance of minimizing the effects of these overheads. To address the issues, we first formulated the problem as an integer linear program but due to its exponential nature, we presented a heuristic algorithm which is a two-step algorithm to solve the above-mentioned overheads. The first step is the bin-packing algorithm that helps reduce the degree of parallelism in the PSFC and tries to match the VNF execution time across branches. The second step is the selection and routing algorithm that assigns VNF instances and does the routing in a way to minimize packet deposition. We compared the ILP results with the heuristic on a small topology of 7 nodes and 10 links and noticed that our heuristic only deviates 2.5\%-4.4\% in latency and 18.6\%-26.2\% in packet deposition from the optimal solution. Hence, we came to the conclusion that our heuristic solution is in close proximity to the optimal one. Finally, we compare our heuristic with two greedy algorithms on a medium (14 nodes and 21 links) and large (24 nodes and 43 links) topology and show how our work does better in minimizing the overheads caused by parallelism when varying PSFC length, PSFC requests, packet copy/merge cost and bandwidth range.
+
+
+\bibliographystyle{IEEEtran}
+%\bibliographystyle{ieeetran}
+\bibliography{References}
+
+% if have a single appendix:
+%\appendix[Proof of the Zonklar Equations]
+% or
+%\appendix  % for no appendix heading
+% do not use \section anymore after \appendix, only \section*
+% is possibly needed
+
+% use appendices with more than one appendix
+% then use \section to start each appendix
+% you must declare a \section before using any
+% \subsection or using \label (\appendices by itself
+% starts a section numbered zero.)
+%
+
+% use section* for acknowledgment
+
+\end{document}
+
+
